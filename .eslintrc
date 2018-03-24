@@ -1,0 +1,21 @@
+{
+  "rules": {
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+  },
+  "globals": {
+    "document": true,
+    "escape": false,
+    "navigator": false,
+    "unescape": false,
+    "window": true,
+    "describe": true,
+    "before": true,
+    "it": true,
+    "expect": true,
+    "sinon": true
+  },
+  "parser": "babel-eslint"
+}
