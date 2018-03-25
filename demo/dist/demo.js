@@ -977,7 +977,7 @@ var _reactProvideState2 = _interopRequireDefault(_reactProvideState);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ComponentACode = "&lt;KeyboardEventHandler handleKeys={['a', 'b', 'c']} onKeyEvent={(key, e) =&gt; props.setEventKey(e.key)}/&gt;";
+var ComponentACode = "&lt;KeyboardEventHandler handleKeys={['a', 'b', 'c']} onKeyEvent={(key, e) =&gt; props.setEventKey(key)}/&gt;";
 var ComponentA = function ComponentA(props) {
   return _react2.default.createElement(
     'div',
@@ -1008,13 +1008,13 @@ var ComponentA = function ComponentA(props) {
     ),
     _react2.default.createElement(_KeyboardEventHandler2.default, { handleKeys: ['a', 'b', 'c'],
       onKeyEvent: function onKeyEvent(key, e) {
-        return props.setEventKey(e.key);
+        return props.setEventKey(key);
       } })
   );
 };
 var ComponentAWithKeyState = (0, _reactProvideState2.default)({ namespace: Symbol(), name: 'eventKey' })(ComponentA);
 
-var ComponentBCode = "&lt;KeyboardEventHandler handleKeys={['numeric']} onKeyEvent={(key, e) =&gt; props.setEventKey(e.key)} /&gt;";
+var ComponentBCode = "&lt;KeyboardEventHandler handleKeys={['numeric']} onKeyEvent={(key, e) =&gt; props.setEventKey(key)} /&gt;";
 var ComponentB = function ComponentB(props) {
   return _react2.default.createElement(
     'div',
@@ -1051,7 +1051,7 @@ var ComponentB = function ComponentB(props) {
     ),
     _react2.default.createElement(_KeyboardEventHandler2.default, { handleKeys: ['numeric'],
       onKeyEvent: function onKeyEvent(key, e) {
-        return props.setEventKey(e.key);
+        return props.setEventKey(key);
       } })
   );
 };
@@ -1093,7 +1093,7 @@ var ComponentC = function ComponentC(props) {
       )
     ),
     _react2.default.createElement(_KeyboardEventHandler2.default, { handleKeys: ['all'], onKeyEvent: function onKeyEvent(key, e) {
-        return props.setEventKey(e.key);
+        return props.setEventKey(key);
       } })
   );
 };
@@ -1135,7 +1135,7 @@ var ComponentD = function ComponentD(props) {
     ),
     _react2.default.createElement(_KeyboardEventHandler2.default, { handleKeys: ['ctrl+a', 'alt+b', 'meta+c'],
       onKeyEvent: function onKeyEvent(key, e) {
-        return props.setEventKey(e.key);
+        return props.setEventKey(key);
       } })
   );
 };
@@ -1147,8 +1147,8 @@ var ComponentModalCode = "&lt;KeyboardEventHandler \
 isExclusive={props.show} \
 handleKeys={['all']} \
 onKeyEvent={(key, e) =&gt; { \
-  props.setEventKey(e.key); \
-  if (e.key === 'Escape') { \
+  props.setEventKey(key); \
+  if (key === 'Escape') { \
     props.setShow(false) \
   } \
 } } /&gt;";
@@ -1218,8 +1218,8 @@ var ComponentModal = function ComponentModal(props) {
             isExclusive: props.show,
             handleKeys: ['all'],
             onKeyEvent: function onKeyEvent(key, e) {
-              props.setEventKey(e.key);
-              if (e.key === 'Escape') {
+              props.setEventKey(key);
+              if (key === 'esc') {
                 props.setShow(false);
               }
             } })
@@ -18703,9 +18703,7 @@ var KeyboardEventHandler = function (_React$Component) {
           handleEventType = _props2.handleEventType;
 
       var eventTypeMatched = handleEventType === event.type;
-      var matchedKey = handleKeys.find(function (k) {
-        return (0, _keyEvents.matchKeyEvent)(event, k);
-      });
+      var matchedKey = (0, _keyEvents.findMatchedKey)(event, handleKeys);
       var exclusiveHandlerInPlace = exclusiveHandlers.length > 0;
       var isExcluded = exclusiveHandlerInPlace && exclusiveHandlers[0] !== this;
 
@@ -19405,6 +19403,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.matchKeyEvent = matchKeyEvent;
+exports.findMatchedKey = findMatchedKey;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -19446,10 +19445,10 @@ var numberKeys = '0123456789'.split('').reduce(function (accumulator, current, i
 }, {});
 
 var letterKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').reduce(function (accumulator, current, index) {
-  return Object.assign(accumulator, _defineProperty({}, current, index + 65), _defineProperty({}, current.toLowerCase(), index + 65));
+  return Object.assign(accumulator, _defineProperty({}, current.toLowerCase(), index + 65), _defineProperty({}, current, index + 65));
 }, {});
 
-var modifierKeys = exports.modifierKeys = {
+var modifierKeys = {
   control: 'ctrl',
   ctrl: 'ctrl',
   shift: 'shift',
@@ -19460,14 +19459,15 @@ var modifierKeys = exports.modifierKeys = {
   alt: 'alt'
 };
 
-var keyAliasRegex = exports.keyAliasRegex = {
-  all: /./,
-  alphanumeric: /^[a-z0-9]$/i,
-  alphabetic: /^[a-z]$/i,
-  numeric: /^[0-9]$/i
-};
+var AllKeys = exports.AllKeys = Object.assign({}, commonKeys, commonKeysInUpperCases, numberKeys, letterKeys);
+var alphanumericKeys = Object.assign({}, numberKeys, letterKeys);
 
-var Keys = exports.Keys = Object.assign({}, commonKeys, commonKeysInUpperCases, numberKeys, letterKeys);
+var aliasKeys = {
+  all: Object.keys(AllKeys),
+  alphanumeric: Object.keys(alphanumericKeys),
+  numeric: Object.keys(numberKeys),
+  alphabetic: Object.keys(letterKeys)
+};
 
 function matchKeyEvent(event, keyName) {
   var eventKeyCode = event.which || event.keyCode;
@@ -19477,14 +19477,8 @@ function matchKeyEvent(event, keyName) {
   var cleanKeyName = keyName.toLowerCase().trim();
   var keyNameParts = cleanKeyName.split(/\s?\+\s?/); // e.g. 'crtl + a'
   var mainKeyName = keyNameParts.pop();
-  var mainKeyCode = Keys[mainKeyName];
+  var mainKeyCode = AllKeys[mainKeyName];
   var modifierKeyNames = keyNameParts;
-
-  if (keyAliasRegex[mainKeyName]) {
-    var pressedChar = event.key || String.fromCharCode(event.charCode);
-    var pattern = keyAliasRegex[mainKeyName];
-    return pattern.test(pressedChar);
-  }
 
   var isMatched = eventKeyCode === mainKeyCode;
 
@@ -19500,6 +19494,21 @@ function matchKeyEvent(event, keyName) {
   }
 
   return isMatched;
+}
+
+function findMatchedKey(event, keys) {
+  var lookupAlias = function lookupAlias(k) {
+    var found = aliasKeys[k.toLowerCase()];
+    return found ? found : k;
+  };
+
+  var expandedKeys = keys.map(lookupAlias).reduce(function (a, b) {
+    return a.concat(b);
+  }, []);
+
+  return expandedKeys.find(function (k) {
+    return matchKeyEvent(event, k);
+  });
 }
 
 /***/ }),

@@ -4,7 +4,7 @@ import KeyboardEventHandler from '../../src/KeyboardEventHandler';
 import provideState from 'react-provide-state';
 
 const ComponentACode =
-  "&lt;KeyboardEventHandler handleKeys={['a', 'b', 'c']} onKeyEvent={(key, e) =&gt; props.setEventKey(e.key)}/&gt;";
+  "&lt;KeyboardEventHandler handleKeys={['a', 'b', 'c']} onKeyEvent={(key, e) =&gt; props.setEventKey(key)}/&gt;";
 const ComponentA = (props) => (<div className="card card-with-margin">
   <div className="card-header">I handle 'a', 'b' and 'c' only</div>
   <div className="card-body ">
@@ -14,13 +14,13 @@ const ComponentA = (props) => (<div className="card card-with-margin">
     <mark>{props.eventKey}</mark>
   </strong></div>
   <KeyboardEventHandler handleKeys={['a', 'b', 'c']}
-                        onKeyEvent={(key, e) => props.setEventKey(e.key)} />
+                        onKeyEvent={(key, e) => props.setEventKey(key)} />
 </div>);
 const ComponentAWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentA);
 
 
 const ComponentBCode =
-  "&lt;KeyboardEventHandler handleKeys={['numeric']} onKeyEvent={(key, e) =&gt; props.setEventKey(e.key)} /&gt;";
+  "&lt;KeyboardEventHandler handleKeys={['numeric']} onKeyEvent={(key, e) =&gt; props.setEventKey(key)} /&gt;";
 const ComponentB = (props) => (<div className="card card-with-margin">
   <div className="card-header">I handle all <strong>numeric</strong> keys</div>
   <div className="card-body ">
@@ -30,7 +30,7 @@ const ComponentB = (props) => (<div className="card card-with-margin">
     <mark>{props.eventKey}</mark>
   </strong></div>
   <KeyboardEventHandler handleKeys={['numeric']}
-                        onKeyEvent={(key, e) => props.setEventKey(e.key)} />
+                        onKeyEvent={(key, e) => props.setEventKey(key)} />
 </div>);
 const ComponentBWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentB);
 
@@ -45,7 +45,7 @@ const ComponentC = (props) => (<div className="card card-with-margin">
   <div className="card-footer text-success">key detected: <strong>
     <mark>{props.eventKey}</mark>
   </strong></div>
-  <KeyboardEventHandler handleKeys={['all']} onKeyEvent={(key, e) => props.setEventKey(e.key)} />
+  <KeyboardEventHandler handleKeys={['all']} onKeyEvent={(key, e) => props.setEventKey(key)} />
 </div>);
 const ComponentCWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentC);
 
@@ -61,7 +61,7 @@ const ComponentD = (props) => (<div className="card card-with-margin">
     <mark>{props.eventKey}</mark>
   </strong></div>
   <KeyboardEventHandler handleKeys={['ctrl+a', 'alt+b', 'meta+c']}
-                        onKeyEvent={(key, e) => props.setEventKey(e.key)} />
+                        onKeyEvent={(key, e) => props.setEventKey(key)} />
 </div>);
 const ComponentDWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentD);
 
@@ -72,8 +72,8 @@ const ComponentModalCode = "&lt;KeyboardEventHandler \
 isExclusive={props.show} \
 handleKeys={['all']} \
 onKeyEvent={(key, e) =&gt; { \
-  props.setEventKey(e.key); \
-  if (e.key === 'Escape') { \
+  props.setEventKey(key); \
+  if (key === 'Escape') { \
     props.setShow(false) \
   } \
 } } /&gt;";
@@ -104,8 +104,8 @@ const ComponentModal = (props) => (<div>
           isExclusive={props.show}
           handleKeys={['all']}
           onKeyEvent={(key, e) => {
-            props.setEventKey(e.key);
-            if (e.key === 'Escape') {
+            props.setEventKey(key);
+            if (key === 'esc') {
               props.setShow(false)
             }
           } } />

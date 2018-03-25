@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { matchKeyEvent } from './keyEvents';
+import { findMatchedKey } from './keyEvents';
 
 let exclusiveHandlers = [];
 
@@ -60,7 +60,7 @@ export default class KeyboardEventHandler extends React.Component {
   handleKeyboardEvent(event) {
     const { isDisabled, handleKeys, onKeyEvent, handleEventType } = this.props;
     const eventTypeMatched = handleEventType === event.type;
-    const matchedKey = handleKeys.find((k) => matchKeyEvent(event, k));
+    const matchedKey = findMatchedKey(event, handleKeys);
     const exclusiveHandlerInPlace = exclusiveHandlers.length > 0;
     const isExcluded = exclusiveHandlerInPlace && exclusiveHandlers[0] !== this;
 

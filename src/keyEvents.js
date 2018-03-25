@@ -41,11 +41,11 @@ const letterKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
   .reduce((accumulator, current, index) =>
     Object.assign(
       accumulator,
-      { [current]: index + 65 },
-      { [current.toLowerCase()]: index + 65 }), {});
+      { [current.toLowerCase()]: index + 65 },
+      { [current]: index + 65 }), {});
 
 
-export const modifierKeys = {
+const modifierKeys = {
   control: 'ctrl',
   ctrl: 'ctrl',
   shift: 'shift',
@@ -56,14 +56,15 @@ export const modifierKeys = {
   alt: 'alt',
 };
 
-export const keyAliasRegex = {
-  all: /./,
-  alphanumeric: /^[a-z0-9]$/i,
-  alphabetic: /^[a-z]$/i,
-  numeric: /^[0-9]$/i,
-};
+export const AllKeys = Object.assign({}, commonKeys, commonKeysInUpperCases, numberKeys, letterKeys);
+const alphanumericKeys = Object.assign({}, numberKeys, letterKeys);
 
-export const Keys = Object.assign({}, commonKeys, commonKeysInUpperCases, numberKeys, letterKeys);
+const aliasKeys = {
+  all: Object.keys(AllKeys),
+  alphanumeric: Object.keys(alphanumericKeys),
+  numeric: Object.keys(numberKeys),
+  alphabetic: Object.keys(letterKeys),
+};
 
 export function matchKeyEvent(event, keyName) {
   const eventKeyCode = event.which || event.keyCode;
@@ -71,14 +72,8 @@ export function matchKeyEvent(event, keyName) {
   const cleanKeyName = keyName.toLowerCase().trim();
   const keyNameParts = cleanKeyName.split(/\s?\+\s?/); // e.g. 'crtl + a'
   const mainKeyName = keyNameParts.pop();
-  const mainKeyCode = Keys[mainKeyName];
+  const mainKeyCode = AllKeys[mainKeyName];
   const modifierKeyNames = keyNameParts;
-
-  if (keyAliasRegex[mainKeyName]) {
-    const pressedChar = event.key || String.fromCharCode(event.charCode);
-    const pattern = keyAliasRegex[mainKeyName];
-    return pattern.test(pressedChar);
-  }
 
   let isMatched = eventKeyCode === mainKeyCode;
 
@@ -91,4 +86,15 @@ export function matchKeyEvent(event, keyName) {
   }
 
   return isMatched;
+}
+
+export function findMatchedKey(event, keys) {
+  const lookupAlias = (k) => {
+    const found = aliasKeys[k.toLowerCase()];
+    return found ? found : k;
+  };
+
+  const expandedKeys = keys.map(lookupAlias).reduce( (a, b) => a.concat(b), []);
+
+  return expandedKeys.find(k => matchKeyEvent(event, k));
 }
