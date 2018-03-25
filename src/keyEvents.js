@@ -75,14 +75,18 @@ export function matchKeyEvent(event, keyName) {
   const mainKeyCode = AllKeys[mainKeyName];
   const modifierKeyNames = keyNameParts;
 
-  let isMatched = eventKeyCode === mainKeyCode;
+  let isMatched = false;
 
-  if (modifierKeyNames.length > 0) {
+  if (modifierKeyNames.length === 0 && eventModifiers.length === 0) {
+    isMatched = eventKeyCode === mainKeyCode;
+  }
+
+  if (modifierKeyNames.length > 0 && eventModifiers.length > 0) {
     const modifiers = modifierKeyNames.map(modKey => modifierKeys[modKey]).sort();
     const modifiersMatched = modifiers.length === eventModifiers.length &&
       modifiers.every((modKey, index) => eventModifiers[index] === modKey);
 
-    isMatched = isMatched && modifiersMatched;
+    isMatched = eventKeyCode === mainKeyCode && modifiersMatched;
   }
 
   return isMatched;

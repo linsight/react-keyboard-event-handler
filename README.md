@@ -69,7 +69,7 @@ The `handleKeys` prop accepts an array of key names.
 
 ### Common keys
 
-You can handle one of more common keys by using an array of their names
+You can handle one of more common keys by using an array of their names.
 
 ```
 <KeyboardEventHandler 
@@ -106,6 +106,9 @@ down| 40
 `[`| 219
 `\\`| 220
 `]`| 221
+
+**Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`.
+To match native keyboard event with modifiers, read the next section.
 
 ### Modifier keys
 
@@ -146,8 +149,12 @@ Alias|Keys|Description
 'all' | n/a | handle all keyboard events
  
  
-When a keyboard event matches, the first (`key`) parameter to the callback function will be a 
-lowercase key name.
+__Note__:
+1. Alias keys are alias to a list of common keys. Expect the same behavior as if the respective array of of common key names is in use.
+1. When a keyboard event matches, the first (`key`) parameter to the callback function will be the matched.
+lowercase common key name.
+1. Alias key names do not work with modifiers.
+
  
 # About exclusive handlers
 

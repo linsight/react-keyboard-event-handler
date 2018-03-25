@@ -34,6 +34,14 @@ describe('keyEvents', () => {
       ).to.be.true;
       expect(matchKeyEvent({ which: 65, metaKey: true }, 'cmd + A')).to.be.true;
     });
+
+    it('should not match single key with an event with modify key', () => {
+      expect(matchKeyEvent({ which: 48 }, '0')).to.be.true;
+      expect(matchKeyEvent({ which: 48, ctrlKey: true }, '0')).to.be.false;
+      expect(matchKeyEvent({ which: 65, shiftKey: false }, 'a')).to.be.true;
+      expect(matchKeyEvent({ which: 65, shiftKey: true }, 'a')).to.be.false;
+    });
+
   });
 
   describe('findMatchedKey', () => {

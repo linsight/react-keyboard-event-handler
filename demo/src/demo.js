@@ -102,6 +102,7 @@ const ComponentModal = (props) => (<div>
         </div>
         <KeyboardEventHandler
           isExclusive={props.show}
+          isDisabled={!props.show}
           handleKeys={['all']}
           onKeyEvent={(key, e) => {
             props.setEventKey(key);

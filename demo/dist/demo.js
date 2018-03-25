@@ -1216,6 +1216,7 @@ var ComponentModal = function ComponentModal(props) {
           ),
           _react2.default.createElement(_KeyboardEventHandler2.default, {
             isExclusive: props.show,
+            isDisabled: !props.show,
             handleKeys: ['all'],
             onKeyEvent: function onKeyEvent(key, e) {
               props.setEventKey(key);
@@ -19480,9 +19481,13 @@ function matchKeyEvent(event, keyName) {
   var mainKeyCode = AllKeys[mainKeyName];
   var modifierKeyNames = keyNameParts;
 
-  var isMatched = eventKeyCode === mainKeyCode;
+  var isMatched = false;
 
-  if (modifierKeyNames.length > 0) {
+  if (modifierKeyNames.length === 0 && eventModifiers.length === 0) {
+    isMatched = eventKeyCode === mainKeyCode;
+  }
+
+  if (modifierKeyNames.length > 0 && eventModifiers.length > 0) {
     var modifiers = modifierKeyNames.map(function (modKey) {
       return modifierKeys[modKey];
     }).sort();
@@ -19490,7 +19495,7 @@ function matchKeyEvent(event, keyName) {
       return eventModifiers[index] === modKey;
     });
 
-    isMatched = isMatched && modifiersMatched;
+    isMatched = eventKeyCode === mainKeyCode && modifiersMatched;
   }
 
   return isMatched;
