@@ -35,7 +35,7 @@ const ComponentA = (props) => (<div>
   <div>key detected: {props.eventKey}</div>
   <KeyboardEventHandler 
     handleKeys={['a', 'b', 'c']}
-    onKeyEvent={(key, e) => console.log('do someting upon matched keydown event')} />
+    onKeyEvent={(key, e) => console.log('do something upon matched keydown event')} />
 </div>);
 
 ```
@@ -59,7 +59,7 @@ The `handleKeys` prop accepts an array of key names.
 
    1. Key names given in the `heandleKeys` prop will be converted to lower case before matching a keyboard event;
    1. Therefore, 'A' is the same as 'a' and 'ALT' or 'Alt' is the same as 'alt';
-   1. Event if you set `heandleKeys` to handle lowercase 'a', it will still handles key event for 'A' with caps lock on or with shift key pressed;
+   1. Event if you set `heandleKeys` to handle lowercase 'a', it will still handles key event for 'A' with caps lock on.
    1. To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
    3. The first parameter to the `onKeyEvent` callback function will always use the exact string given in `handleKeys` prop regardless of its letter cases.
    
@@ -131,8 +131,8 @@ alt| option, alt key
 
 ### Key alias
 
-Key alias provide any easy way to specify common key sets. It is useful when you want handles multiple keys
-and put the handling logic for each keys inside one handler callback function.
+Key alias provide any easy way to specify common key sets. It is useful when you want to handle multiple keys
+and put all handling logic for each key inside the handler callback function.
 
 ```
 <KeyboardEventHandler 
@@ -159,28 +159,28 @@ lowercase common key name.
 # About exclusive handlers
 
 For example, in an app with a list of products, 
-you could have a handler for navigating (highlighting) a list of products using up and down keys. 
-Upon clicking (or hitting the 'enter' key on) the item, a modal pops up.
+you could have a handler for navigating (highlighting) the products with the up and down keys. 
+Upon selecting (or hitting the 'enter' key on) a product, a modal pops up.
 
 Within the modal is a list of options for the selected product. 
-You could also use a key handler in the modal using the up and down keys to navigate the options.
+Another key handler can be used inside the modal using for navigating the options with the up and down keys, too.
  
-However, the key handler for the product list (i.e. `isDisabled={true}`) should be first disabled. 
+However, the key handler for the product list should be first disabled (i.e. `isDisabled={true}`). 
 Otherwise, the user will be navigating
 the product options in the modal and the product list in the background at the same time.
 
-You could have other key handlers in your app, they all should be disabled to avoid unexpected results.
+There could be other key handlers in your app, they all should be disabled to avoid unexpected results.
 
 The `isExclusive` prop can be really helpful in this situation. When a handler set to `isExclusive`,
 all other key handlers will be suspended.
 
 In the above example, the key handler in the modal could set to be `isExclusive`. When the modal opens,
-all other handlers will be temporary suspended. When the modal is closed/unmounted, they will be working again.
+all other handlers will be temporarily suspended. When the modal is closed/unmounted, they will be working again.
 
-If more than one enabled handlers are `isExclusive`, the most recently mounted/assigned handler win.
+If more than one enabled handlers are `isExclusive`, the most recently mounted/assigned handler wins.
  
 Technically, exclusive handlers are put into a stack upon mounted or when changed from non-exclusive to exclusive;
-exclusive handlers are removed from the stack upon unmounted or disabled or changed to non-exclusive.
+Exclusive handlers are removed from the stack upon unmounted or disabled or changed to non-exclusive.
 The one left on the top of the stack is the one only exclusive handler.
 
  
@@ -188,7 +188,7 @@ The one left on the top of the stack is the one only exclusive handler.
 # About Higher Order Component
 
 I believe this is not a good use case of HoC.
-I found it hard to come up with a use case for passing an keyboard event object or the relevant key to a component.
+I found it hard to come up with a meaningful use case for passing an keyboard event object or the relevant key to a component.
 
 However, if you have a different view on this, please create an issue/request on github.
 
