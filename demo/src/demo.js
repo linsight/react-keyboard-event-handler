@@ -80,7 +80,7 @@ onKeyEvent={(key, e) =&gt; { \
 } } /&gt;";
 
 const ComponentModal = (props) => (<div>
-  <div className={`modal fade ${props.show ? 'show' : ''}`} style={{ display: "block" }}>
+  <div className={`modal fade ${props.show ? 'show' : ''}`} style={{ display: props.show ? "block": "none" }}>
     <div className="modal-dialog">
       <div className="modal-content">
         <div className="modal-header">
@@ -114,7 +114,7 @@ const ComponentModal = (props) => (<div>
       </div>
     </div>
   </div>
-  <div className={`modal-backdrop fade ${props.show ? 'show' : ''}`}></div>
+  <div className={props.show ? 'modal-backdrop fade show' : ''}></div>
 </div>);
 
 let ComponentModalWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentModal);
@@ -128,30 +128,72 @@ const ComponentTrigger = (props) => (<div>
     <div className="card-body ">
       <small dangerouslySetInnerHTML={{ __html: ComponentTriggerCode }}></small>
     </div>
-    <div className="card-footer text-success">Open a modal by keying 'ctrl+o'</div>
+    <div className="card-footer text-success">Open a modal by keying 'ctrl+o' to see how 'exclusive handler' works</div>
     <KeyboardEventHandler handleKeys={['ctrl+o']} onKeyEvent={(key, e) => props.setShow(true)} />
   </div>
 </div>);
 const ComponentTriggerWithKeyState = provideState(modalStateConfig)(ComponentTrigger);
 
+const ComponentECode = `&lt;KeyboardEventHandler handleKeys={['all']} onKeyEvent={(key, e) =&gt; props.setEventKey(key)} &gt;
+      &lt;p&gt;
+        &lt;input type="text" placeholder="Key events will be handled"/&gt;
+      &lt;/p&gt;
+      &lt;p&gt;
+        &lt;a href="#" &gt;Example focusable element. Key event will be handled&lt;/a&gt;
+      &lt;/p&gt;
+    &lt;/KeyboardEventHandler&gt;`;
+const ComponentE = (props) => (<div className="card card-with-margin">
+  <div className="card-header">I handle <strong>all</strong> key events from my wrapped children</div>
+  <div className="card-body ">
+    <small dangerouslySetInnerHTML={{ __html: ComponentECode }}></small>
+  </div>
+  <div className="card-footer text-success">key detected: <strong>
+    <mark>{props.eventKey}</mark>
+    <KeyboardEventHandler handleKeys={['all']} onKeyEvent={(key, e) => props.setEventKey(key)} >
+      <p>
+        <input type="text" placeholder="Key events will be handled"/>
+      </p>
+      <p>
+        <a href="#" >Example focusable element. Key event will be handled</a>
+      </p>
+    </KeyboardEventHandler>
+  </strong></div>
+
+</div>);
+const ComponentECodeWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentE);
+
+const ComponentF = (props) => (<div className="card card-with-margin">
+  <div className="card-header">I <strong>don't</strong> handle form controls or links by default</div>
+  <div className="card-body ">
+    <small>By default, ey events on active elements (i.e. form controls, links, tab-enabled elements) are not handled.
+      Handler will not interfere form controls.</small>
+    <input type="text" placeholder="Please type" size="20"/>
+  </div>
+</div>);
 
 ReactDom.render(
   <div className="row">
-    <div className="col">
+    <div className="col-4">
       <ComponentCWithKeyState />
     </div>
-    <div className="col">
+    <div className="col-4">
       <ComponentAWithKeyState />
     </div>
-    <div className="col">
+    <div className="col-4">
       <ComponentBWithKeyState />
     </div>
-    <div className="col">
+    <div className="col-4">
       <ComponentDWithKeyState />
     </div>
-    <div className="col">
+    <div className="col-4">
       <ComponentTriggerWithKeyState />
       <ComponentModalWithKeyState />
+    </div>
+    <div className="col-4">
+      <ComponentF />
+    </div>
+    <div className="col-12">
+      <ComponentECodeWithKeyState />
     </div>
   </div>,
   document.querySelector('#root')

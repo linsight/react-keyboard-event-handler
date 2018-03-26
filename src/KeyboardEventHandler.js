@@ -58,19 +58,48 @@ export default class KeyboardEventHandler extends React.Component {
   }
 
   handleKeyboardEvent(event) {
-    const { isDisabled, handleKeys, onKeyEvent, handleEventType } = this.props;
-    const eventTypeMatched = handleEventType === event.type;
-    const matchedKey = findMatchedKey(event, handleKeys);
+    const { isDisabled, handleKeys, onKeyEvent, handleEventType, children } = this.props;
+
+    if (isDisabled) {
+      return false;
+    }
+
+    const isEventTypeMatched = handleEventType === event.type;
+
+    if (!isEventTypeMatched) {
+      return false;
+    }
+
     const exclusiveHandlerInPlace = exclusiveHandlers.length > 0;
     const isExcluded = exclusiveHandlerInPlace && exclusiveHandlers[0] !== this;
 
-    if (!isDisabled && !isExcluded && eventTypeMatched && matchedKey) {
-      onKeyEvent(matchedKey, event);
+    if (isExcluded) {
+      return false;
     }
+
+    const isDocumentEvent = event.target === document.body;
+    const isChildrenEvent = this.childrenContainer && this.childrenContainer.contains(event.target);
+    const isValidSource = children ? isChildrenEvent : isDocumentEvent;
+
+    if (!isValidSource) {
+      return false;
+    }
+
+    const matchedKey = findMatchedKey(event, handleKeys);
+
+    if (matchedKey) {
+      onKeyEvent(matchedKey, event);
+      return true;
+    }
+
+    return false;
   }
 
   render() {
-    return this.props.children || null;
+    const { children } = this.props;
+    return children ? (<span ref={ e => {
+        this.childrenContainer = e;
+      }}>{children}</span>) : null;
   }
 }
 

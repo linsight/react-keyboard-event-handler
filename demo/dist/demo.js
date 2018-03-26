@@ -1160,7 +1160,7 @@ var ComponentModal = function ComponentModal(props) {
     null,
     _react2.default.createElement(
       'div',
-      { className: 'modal fade ' + (props.show ? 'show' : ''), style: { display: "block" } },
+      { className: 'modal fade ' + (props.show ? 'show' : ''), style: { display: props.show ? "block" : "none" } },
       _react2.default.createElement(
         'div',
         { className: 'modal-dialog' },
@@ -1228,7 +1228,7 @@ var ComponentModal = function ComponentModal(props) {
         )
       )
     ),
-    _react2.default.createElement('div', { className: 'modal-backdrop fade ' + (props.show ? 'show' : '') })
+    _react2.default.createElement('div', { className: props.show ? 'modal-backdrop fade show' : '' })
   );
 };
 
@@ -1261,7 +1261,7 @@ var ComponentTrigger = function ComponentTrigger(props) {
       _react2.default.createElement(
         'div',
         { className: 'card-footer text-success' },
-        'Open a modal by keying \'ctrl+o\''
+        'Open a modal by keying \'ctrl+o\' to see how \'exclusive handler\' works'
       ),
       _react2.default.createElement(_KeyboardEventHandler2.default, { handleKeys: ['ctrl+o'], onKeyEvent: function onKeyEvent(key, e) {
           return props.setShow(true);
@@ -1271,34 +1271,131 @@ var ComponentTrigger = function ComponentTrigger(props) {
 };
 var ComponentTriggerWithKeyState = (0, _reactProvideState2.default)(modalStateConfig)(ComponentTrigger);
 
+var ComponentECode = '&lt;KeyboardEventHandler handleKeys={[\'all\']} onKeyEvent={(key, e) =&gt; props.setEventKey(key)} &gt;\n      &lt;p&gt;\n        &lt;input type="text" placeholder="Key events will be handled"/&gt;\n      &lt;/p&gt;\n      &lt;p&gt;\n        &lt;a href="#" &gt;Example focusable element. Key event will be handled&lt;/a&gt;\n      &lt;/p&gt;\n    &lt;/KeyboardEventHandler&gt;';
+var ComponentE = function ComponentE(props) {
+  return _react2.default.createElement(
+    'div',
+    { className: 'card card-with-margin' },
+    _react2.default.createElement(
+      'div',
+      { className: 'card-header' },
+      'I handle ',
+      _react2.default.createElement(
+        'strong',
+        null,
+        'all'
+      ),
+      ' key events from my wrapped children'
+    ),
+    _react2.default.createElement(
+      'div',
+      { className: 'card-body ' },
+      _react2.default.createElement('small', { dangerouslySetInnerHTML: { __html: ComponentECode } })
+    ),
+    _react2.default.createElement(
+      'div',
+      { className: 'card-footer text-success' },
+      'key detected: ',
+      _react2.default.createElement(
+        'strong',
+        null,
+        _react2.default.createElement(
+          'mark',
+          null,
+          props.eventKey
+        ),
+        _react2.default.createElement(
+          _KeyboardEventHandler2.default,
+          { handleKeys: ['all'], onKeyEvent: function onKeyEvent(key, e) {
+              return props.setEventKey(key);
+            } },
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement('input', { type: 'text', placeholder: 'Key events will be handled' })
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+              'a',
+              { href: '#' },
+              'Example focusable element. Key event will be handled'
+            )
+          )
+        )
+      )
+    )
+  );
+};
+var ComponentECodeWithKeyState = (0, _reactProvideState2.default)({ namespace: Symbol(), name: 'eventKey' })(ComponentE);
+
+var ComponentF = function ComponentF(props) {
+  return _react2.default.createElement(
+    'div',
+    { className: 'card card-with-margin' },
+    _react2.default.createElement(
+      'div',
+      { className: 'card-header' },
+      'I ',
+      _react2.default.createElement(
+        'strong',
+        null,
+        'don\'t'
+      ),
+      ' handle form controls or links by default'
+    ),
+    _react2.default.createElement(
+      'div',
+      { className: 'card-body ' },
+      _react2.default.createElement(
+        'small',
+        null,
+        'By default, ey events on active elements (i.e. form controls, links, tab-enabled elements) are not handled. Handler will not interfere form controls.'
+      ),
+      _react2.default.createElement('input', { type: 'text', placeholder: 'Please type', size: '20' })
+    )
+  );
+};
+
 _reactDom2.default.render(_react2.default.createElement(
   'div',
   { className: 'row' },
   _react2.default.createElement(
     'div',
-    { className: 'col' },
+    { className: 'col-4' },
     _react2.default.createElement(ComponentCWithKeyState, null)
   ),
   _react2.default.createElement(
     'div',
-    { className: 'col' },
+    { className: 'col-4' },
     _react2.default.createElement(ComponentAWithKeyState, null)
   ),
   _react2.default.createElement(
     'div',
-    { className: 'col' },
+    { className: 'col-4' },
     _react2.default.createElement(ComponentBWithKeyState, null)
   ),
   _react2.default.createElement(
     'div',
-    { className: 'col' },
+    { className: 'col-4' },
     _react2.default.createElement(ComponentDWithKeyState, null)
   ),
   _react2.default.createElement(
     'div',
-    { className: 'col' },
+    { className: 'col-4' },
     _react2.default.createElement(ComponentTriggerWithKeyState, null),
     _react2.default.createElement(ComponentModalWithKeyState, null)
+  ),
+  _react2.default.createElement(
+    'div',
+    { className: 'col-4' },
+    _react2.default.createElement(ComponentF, null)
+  ),
+  _react2.default.createElement(
+    'div',
+    { className: 'col-12' },
+    _react2.default.createElement(ComponentECodeWithKeyState, null)
   )
 ), document.querySelector('#root'));
 
@@ -18702,21 +18799,58 @@ var KeyboardEventHandler = function (_React$Component) {
           isDisabled = _props2.isDisabled,
           handleKeys = _props2.handleKeys,
           onKeyEvent = _props2.onKeyEvent,
-          handleEventType = _props2.handleEventType;
+          handleEventType = _props2.handleEventType,
+          children = _props2.children;
 
-      var eventTypeMatched = handleEventType === event.type;
-      var matchedKey = (0, _keyEvents.findMatchedKey)(event, handleKeys);
+
+      if (isDisabled) {
+        return false;
+      }
+
+      var isEventTypeMatched = handleEventType === event.type;
+
+      if (!isEventTypeMatched) {
+        return false;
+      }
+
       var exclusiveHandlerInPlace = exclusiveHandlers.length > 0;
       var isExcluded = exclusiveHandlerInPlace && exclusiveHandlers[0] !== this;
 
-      if (!isDisabled && !isExcluded && eventTypeMatched && matchedKey) {
-        onKeyEvent(matchedKey, event);
+      if (isExcluded) {
+        return false;
       }
+
+      var isDocumentEvent = event.target === document.body;
+      var isChildrenEvent = this.childrenContainer && this.childrenContainer.contains(event.target);
+      var isValidSource = children ? isChildrenEvent : isDocumentEvent;
+
+      if (!isValidSource) {
+        return false;
+      }
+
+      var matchedKey = (0, _keyEvents.findMatchedKey)(event, handleKeys);
+
+      if (matchedKey) {
+        onKeyEvent(matchedKey, event);
+        return true;
+      }
+
+      return false;
     }
   }, {
     key: 'render',
     value: function render() {
-      return this.props.children || null;
+      var _this3 = this;
+
+      var children = this.props.children;
+
+      return children ? _react2.default.createElement(
+        'span',
+        { ref: function ref(e) {
+            _this3.childrenContainer = e;
+          } },
+        children
+      ) : null;
     }
   }]);
 

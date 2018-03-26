@@ -11,7 +11,7 @@ A React component for handling keyboard events (keyup, keydown and keypress<sup>
 4. Supports handling multiple keys (as an array) by one handler;
 
 
-## Live demo 
+## Live demo
 
 [demo/dist/index.html](https://linsight.github.io/react-keyboard-event-handler/demo/dist/index.html)
 
@@ -23,24 +23,53 @@ npm install react-keyboard-event-handler
 ```
 
 
-# API
+# Usage
+## Handling global key events
 
+By default, `KeyboardEventHandler` only handles global key events sourced from `document.body`.
+That is, key events fired without any `activeElement` or focused element. It will not
+handle key events sourced from form controls (e.g. input ), links or any
+tab-enabled(focusable) elements (i.e. elements with `tabIndex` attribute).
 
-## Basic usage
+Web browsers come with default keyboard behaviors with tab-enabled elements. It may be desirable
+to let the browser do its job in most cases.
 
 ```
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 
 const ComponentA = (props) => (<div>
   <div>key detected: {props.eventKey}</div>
-  <KeyboardEventHandler 
+  <KeyboardEventHandler
     handleKeys={['a', 'b', 'c']}
     onKeyEvent={(key, e) => console.log(`do something upon keydown event of ${key}`)} />
 </div>);
 
 ```
 
-### API summary
+## Handles key events sourced from children elements
+
+If `KeyboardEventHandler` wraps around any children elements, it will handle and ONLY handle key events sourced from its descendant elements, including any form controls, links or tab-enabled elements.
+
+```
+import KeyboardEventHandler from 'react-keyboard-event-handler';
+
+const ComponentA = (props) => (<div>
+  <div>key detected: {props.eventKey}</div>
+  <KeyboardEventHandler
+    handleKeys={['a', 'b', 'c']}
+    onKeyEvent={(key, e) => console.log(`do something upon keydown event of ${key}`)} >
+    <input type="text" placeholder="Key events will be handled"/>
+    <a href="#" >Key events from focusable element will be handled</a>
+  </KeyboardEventHanlder>
+</div>);
+
+```
+
+
+For form control elements, React provides with `onKeyDown`, `onKeyPress` and `onKeyUp` synthetic events. However, you may find it easier to work with the key names/alias provided by `KeyboardEventHandler`.
+
+
+# API summary
 
 Property|Description|Type|Default
 ---|---|---|---
@@ -50,19 +79,19 @@ isDisabled|Enable/Disable handling keyboard events| Boolean | false
 isExclusive|When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling. | Boolean | false
 onKeyEvent|<p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl>| function | `() => null` 
 
- 
+
 # Key names and key alias
 
 The `handleKeys` prop accepts an array of key names.
 
 1. Key names are **CASE INSENSITIVE**.
 
-   1. Key names given in the `heandleKeys` prop will be converted to lower case before matching a keyboard event;
-   1. Therefore, 'A' is the same as 'a' and 'ALT' or 'Alt' is the same as 'alt';
-   1. Event if you set `heandleKeys` to handle lowercase 'a', it will still handles key event for 'A' with caps lock on.
-   1. To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
-   3. The first parameter to the `onKeyEvent` callback function will always use the exact string given in `handleKeys` prop regardless of its letter cases.
-   
+   - Key names given in the `heandleKeys` prop will be converted to lower case before matching a keyboard event;
+   - Therefore, 'A' is the same as 'a' and 'ALT' or 'Alt' is the same as 'alt';
+   - Event if you set `heandleKeys` to handle lowercase 'a', it will still handles key event for 'A' with caps lock on.
+   - To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
+   - The first parameter to the `onKeyEvent` callback function will always use the exact string given in `handleKeys` prop regardless of its letter cases.
+
 1. It is recommended to always use lower case names just for consistency.
 1. You can also use key name alias like 'numbers' or 'alphanumeric'. When a keyboard event matches, the first (`key`) parameter to the callback function will be a lowercase key name (see bellow for all key names).  
 
@@ -72,10 +101,10 @@ The `handleKeys` prop accepts an array of key names.
 You can handle one of more common keys by using an array of their names.
 
 ```
-<KeyboardEventHandler 
+<KeyboardEventHandler
     handleKeys={['a']}
     onKeyEvent={(key, e) => console.log('only handle "a" key')} />
-    
+
 ```
 
 Key name|Description / key code
@@ -116,10 +145,10 @@ You can handle modifier key combined with a common keys by using key name in the
 
 
 ```
-<KeyboardEventHandler 
+<KeyboardEventHandler
     handleKeys={['ctrl+a']}
     onKeyEvent={(key, e) => console.log('only handle "a" key with control key pressed')} />
-    
+
 ```
 
 
@@ -138,10 +167,10 @@ and put all handling logic for each key inside the handler callback function.
 
 
 ```
-<KeyboardEventHandler 
+<KeyboardEventHandler
     handleKeys={['numeric']}
     onKeyEvent={(key, e) => console.log('only handle number key events')} />
-    
+
 ```
 
 Alias|Keys|Description
@@ -162,30 +191,29 @@ lowercase common key name.
 
 # About exclusive handlers
 
-For example, in an app with a list of products, 
-you could have a handler for navigating (highlighting) the products with the up and down keys. 
-Upon selecting (or hitting the 'enter' key on) a product, a modal pops up.
+For example, in an app with a list of products, you could have a handler for navigating (highlighting) the products with the up and down keys. Upon selecting (or hitting the 'enter' key on) a product, a modal pops up.
 
-Within the modal is a list of options for the selected product. 
-Another key handler can be used inside the modal using for navigating the options with the up and down keys, too.
- 
-However, the key handler for the product list should be first disabled (i.e. `isDisabled={true}`). 
-Otherwise, the user will be navigating
-the product options in the modal and the product list in the background at the same time.
+
+Within the modal is a list of options for the selected product. Another key handler can be used inside the modal using for navigating the options with the up and down keys, too.
+
+
+However, the key handler for the product list should be first disabled (i.e. `isDisabled={true}`).
+Otherwise, the user will be navigating the product options in the modal and the product list in the background at the same time.
+
 
 There could be other key handlers in your app, they all should be disabled to avoid unexpected results.
 
-The `isExclusive` prop can be really helpful in this situation. When a handler set to `isExclusive`,
-all other key handlers will be suspended.
 
-In the above example, the key handler in the modal could set to be `isExclusive`. When the modal opens,
-all other handlers will be temporarily suspended. When the modal is closed/unmounted, they will be working again.
+The `isExclusive` prop can be really helpful in this situation. When a handler set to `isExclusive`, all other key handlers will be suspended.
+
+
+In the above example, the key handler in the modal could set to be `isExclusive`. When the modal opens, all other handlers will be temporarily suspended. When the modal is closed/unmounted, they will be working again.
+
 
 If more than one enabled handlers are `isExclusive`, the most recently mounted/assigned handler wins.
- 
-Technically, exclusive handlers are put into a stack upon mounted or when changed from non-exclusive to exclusive;
-Exclusive handlers are removed from the stack upon unmounted or disabled or changed to non-exclusive.
-The one left on the top of the stack is the one only exclusive handler.
+
+
+Technically, exclusive handlers are put into a stack upon mounted or when changed from non-exclusive to exclusive; Exclusive handlers are removed from the stack upon unmounted or disabled or changed to non-exclusive. The one left on the top of the stack is the one only exclusive handler.
 
 
 # About Higher Order Component
