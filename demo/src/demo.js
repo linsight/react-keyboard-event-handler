@@ -13,8 +13,9 @@ const ComponentA = (props) => (<div className="card card-with-margin">
   <div className="card-footer text-success">key detected: <strong>
     <mark>{props.eventKey}</mark>
   </strong></div>
-  <KeyboardEventHandler handleKeys={['a', 'b', 'c']}
-                        onKeyEvent={(key, e) => props.setEventKey(key)} />
+  <KeyboardEventHandler
+    handleKeys={['a', 'b', 'c']}
+    onKeyEvent={(key, e) => props.setEventKey(key)} />
 </div>);
 const ComponentAWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentA);
 
@@ -73,7 +74,7 @@ isExclusive={props.show} \
 handleKeys={['all']} \
 onKeyEvent={(key, e) =&gt; { \
   props.setEventKey(key); \
-  if (key === 'Escape') { \
+  if (key === 'esc') { \
     props.setShow(false) \
   } \
 } } /&gt;";

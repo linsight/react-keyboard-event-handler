@@ -68,6 +68,7 @@ const aliasKeys = {
 
 export function matchKeyEvent(event, keyName) {
   const eventKeyCode = event.which || event.keyCode;
+  const eventType = event.type;
   const eventModifiers = Object.keys(modifierKeys).filter(modKey => event[`${modKey}Key`]).sort();
   const cleanKeyName = keyName.toLowerCase().trim();
   const keyNameParts = cleanKeyName.split(/\s?\+\s?/); // e.g. 'crtl + a'
@@ -75,10 +76,13 @@ export function matchKeyEvent(event, keyName) {
   const mainKeyCode = AllKeys[mainKeyName];
   const modifierKeyNames = keyNameParts;
 
-  let isMatched = false;
+  if (eventType === 'keypress') {
+    const eventKeyCodeString = String.fromCharCode(eventKeyCode);
+    return keyName == eventKeyCodeString.toLowerCase();
+  }
 
   if (modifierKeyNames.length === 0 && eventModifiers.length === 0) {
-    isMatched = eventKeyCode === mainKeyCode;
+    return eventKeyCode === mainKeyCode;
   }
 
   if (modifierKeyNames.length > 0 && eventModifiers.length > 0) {
@@ -86,19 +90,25 @@ export function matchKeyEvent(event, keyName) {
     const modifiersMatched = modifiers.length === eventModifiers.length &&
       modifiers.every((modKey, index) => eventModifiers[index] === modKey);
 
-    isMatched = eventKeyCode === mainKeyCode && modifiersMatched;
+    return eventKeyCode === mainKeyCode && modifiersMatched;
   }
 
-  return isMatched;
+  return false;
 }
 
 export function findMatchedKey(event, keys) {
   const lookupAlias = (k) => {
     const found = aliasKeys[k.toLowerCase()];
-    return found ? found : k;
+    return found ? [...found, k.toLowerCase()] : k;
   };
 
-  const expandedKeys = keys.map(lookupAlias).reduce( (a, b) => a.concat(b), []);
+  const expandedKeys = keys.map(lookupAlias).reduce((a, b) => a.concat(b), []);
 
-  return expandedKeys.find(k => matchKeyEvent(event, k));
+  let matchedKey = expandedKeys.find(k => matchKeyEvent(event, k));
+
+  if (!matchedKey && expandedKeys.includes('all')) {
+    matchedKey = 'other';
+  }
+
+  return matchedKey;
 }

@@ -1,6 +1,6 @@
 # react-keyboard-event-handler
 
-A React component for handling keyboard events (keyup, keydown and keypress).
+A React component for handling keyboard events (keyup, keydown and keypress<sup>*</sup>).
 
 
 ## Main features
@@ -35,7 +35,7 @@ const ComponentA = (props) => (<div>
   <div>key detected: {props.eventKey}</div>
   <KeyboardEventHandler 
     handleKeys={['a', 'b', 'c']}
-    onKeyEvent={(key, e) => console.log('do something upon matched keydown event')} />
+    onKeyEvent={(key, e) => console.log(`do something upon keydown event of ${key}`)} />
 </div>);
 
 ```
@@ -45,7 +45,7 @@ const ComponentA = (props) => (<div>
 Property|Description|Type|Default
 ---|---|---|---
 handleKeys|An array of keys this handler should handle. <br/> There are also some handy alias for keys, see bellow for details.| Array | []
-handleEventType|Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'| String | keydown
+handleEventType|Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'. <br /><sup>*</sup>**Note**: 'keypress' event only support printable keys. i.e. no support for modifier keys or 'tab', 'enter' etc.| String | keydown
 isDisabled|Enable/Disable handling keyboard events| Boolean | false
 isExclusive|When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling. | Boolean | false
 onKeyEvent|<p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl>| function | `() => null` 
@@ -88,24 +88,24 @@ tab| 9
 enter/return| 13
 esc| 27
 space| 32
-pageUp| 33
-pageDown| 34
+pageup| 33
+pagedown| 34
 end| 35
 home| 36
 left| 37
 up| 38
 right| 39
 down| 40
-`;`| 186
-`=`| 187
-`,`| 188
-`-`| 189
-`.`| 190
-`/`| 191
-```| 192
-`[`| 219
-`\\`| 220
-`]`| 221
+;| 186
+=| 187
+,| 188
+-| 189
+.| 190
+/| 191
+`| 192
+[| 219
+&#92;| 220
+]| 221
 
 **Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`.
 To match native keyboard event with modifiers, read the next section.
@@ -114,12 +114,14 @@ To match native keyboard event with modifiers, read the next section.
 
 You can handle modifier key combined with a common keys by using key name in the format of `ctrl+a` or `ctrl+shift+a`:
 
+
 ```
 <KeyboardEventHandler 
     handleKeys={['ctrl+a']}
     onKeyEvent={(key, e) => console.log('only handle "a" key with control key pressed')} />
     
 ```
+
 
 Key name|Description
 ---|---
@@ -134,6 +136,7 @@ alt| option, alt key
 Key alias provide any easy way to specify common key sets. It is useful when you want to handle multiple keys
 and put all handling logic for each key inside the handler callback function.
 
+
 ```
 <KeyboardEventHandler 
     handleKeys={['numeric']}
@@ -146,16 +149,17 @@ Alias|Keys|Description
 'alphabetic' | 'a', 'b', ...'z'| 26 letter keys
 'numeric' | '0', '1', ....'9 | 10 number keys
 'alphanumeric' | 'a'...'z', '0'...'9' |  36 alphanumeric keys
-'all' | n/a | handle all keyboard events
- 
- 
+'all' | n/a | Handle all keyboard events. If a key event does not match any common keys defined above, the `key` parameter to the callback function will have the value of 'other'.
+
+
 __Note__:
 1. Alias keys are alias to a list of common keys. Expect the same behavior as if the respective array of of common key names is in use.
 1. When a keyboard event matches, the first (`key`) parameter to the callback function will be the matched.
 lowercase common key name.
 1. Alias key names do not work with modifiers.
 
- 
+
+
 # About exclusive handlers
 
 For example, in an app with a list of products, 
@@ -183,12 +187,10 @@ Technically, exclusive handlers are put into a stack upon mounted or when change
 Exclusive handlers are removed from the stack upon unmounted or disabled or changed to non-exclusive.
 The one left on the top of the stack is the one only exclusive handler.
 
- 
 
 # About Higher Order Component
 
 I believe this is not a good use case of HoC.
 I found it hard to come up with a meaningful use case for passing an keyboard event object or the relevant key to a component.
 
-However, if you have a different view on this, please create an issue/request on github.
-
+However, if you have a different view on this, please create an issue/request on GitHub.

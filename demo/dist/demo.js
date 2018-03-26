@@ -1006,7 +1006,8 @@ var ComponentA = function ComponentA(props) {
         )
       )
     ),
-    _react2.default.createElement(_KeyboardEventHandler2.default, { handleKeys: ['a', 'b', 'c'],
+    _react2.default.createElement(_KeyboardEventHandler2.default, {
+      handleKeys: ['a', 'b', 'c'],
       onKeyEvent: function onKeyEvent(key, e) {
         return props.setEventKey(key);
       } })
@@ -19406,6 +19407,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.matchKeyEvent = matchKeyEvent;
 exports.findMatchedKey = findMatchedKey;
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var commonKeys = {
@@ -19472,6 +19475,7 @@ var aliasKeys = {
 
 function matchKeyEvent(event, keyName) {
   var eventKeyCode = event.which || event.keyCode;
+  var eventType = event.type;
   var eventModifiers = Object.keys(modifierKeys).filter(function (modKey) {
     return event[modKey + 'Key'];
   }).sort();
@@ -19481,10 +19485,13 @@ function matchKeyEvent(event, keyName) {
   var mainKeyCode = AllKeys[mainKeyName];
   var modifierKeyNames = keyNameParts;
 
-  var isMatched = false;
+  if (eventType === 'keypress') {
+    var eventKeyCodeString = String.fromCharCode(eventKeyCode);
+    return keyName == eventKeyCodeString.toLowerCase();
+  }
 
   if (modifierKeyNames.length === 0 && eventModifiers.length === 0) {
-    isMatched = eventKeyCode === mainKeyCode;
+    return eventKeyCode === mainKeyCode;
   }
 
   if (modifierKeyNames.length > 0 && eventModifiers.length > 0) {
@@ -19495,25 +19502,31 @@ function matchKeyEvent(event, keyName) {
       return eventModifiers[index] === modKey;
     });
 
-    isMatched = eventKeyCode === mainKeyCode && modifiersMatched;
+    return eventKeyCode === mainKeyCode && modifiersMatched;
   }
 
-  return isMatched;
+  return false;
 }
 
 function findMatchedKey(event, keys) {
   var lookupAlias = function lookupAlias(k) {
     var found = aliasKeys[k.toLowerCase()];
-    return found ? found : k;
+    return found ? [].concat(_toConsumableArray(found), [k.toLowerCase()]) : k;
   };
 
   var expandedKeys = keys.map(lookupAlias).reduce(function (a, b) {
     return a.concat(b);
   }, []);
 
-  return expandedKeys.find(function (k) {
+  var matchedKey = expandedKeys.find(function (k) {
     return matchKeyEvent(event, k);
   });
+
+  if (!matchedKey && expandedKeys.includes('all')) {
+    matchedKey = 'other';
+  }
+
+  return matchedKey;
 }
 
 /***/ }),
