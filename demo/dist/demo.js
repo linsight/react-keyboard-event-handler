@@ -1148,7 +1148,7 @@ isExclusive={props.show} \
 handleKeys={['all']} \
 onKeyEvent={(key, e) =&gt; { \
   props.setEventKey(key); \
-  if (key === 'Escape') { \
+  if (key === 'esc') { \
     props.setShow(false) \
   } \
 } } /&gt;";
@@ -19417,8 +19417,8 @@ var commonKeys = {
   return: 13,
   esc: 27,
   space: 32,
-  pageUp: 33,
-  pageDown: 34,
+  pageup: 33,
+  pagedown: 34,
   end: 35,
   home: 36,
   left: 37,
