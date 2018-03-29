@@ -45,7 +45,7 @@ const config = {
   },
   externals: {
     react: 'react',
-    react: 'prop-types',
+    ['prop-types']: 'prop-types',
   },
   plugins: plugins
 };
