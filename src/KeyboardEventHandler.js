@@ -58,7 +58,9 @@ export default class KeyboardEventHandler extends React.Component {
   }
 
   handleKeyboardEvent(event) {
-    const { isDisabled, handleKeys, onKeyEvent, handleEventType, children } = this.props;
+    const {
+      isDisabled, handleKeys, onKeyEvent, handleEventType, children, handleFocusableElements,
+    } = this.props;
 
     if (isDisabled) {
       return false;
@@ -77,9 +79,9 @@ export default class KeyboardEventHandler extends React.Component {
       return false;
     }
 
-    const isDocumentEvent = event.target === document.body;
+    const isEligibleEvent = event.target === document.body || handleFocusableElements;
     const isChildrenEvent = this.childrenContainer && this.childrenContainer.contains(event.target);
-    const isValidSource = children ? isChildrenEvent : isDocumentEvent;
+    const isValidSource = children ? isChildrenEvent : isEligibleEvent;
 
     if (!isValidSource) {
       return false;
@@ -106,6 +108,7 @@ export default class KeyboardEventHandler extends React.Component {
 KeyboardEventHandler.propTypes = {
   handleKeys: PropTypes.array,
   handleEventType: PropTypes.oneOf(['keydown', 'keyup', 'keypress']),
+  handleFocusableElements: PropTypes.bool,
   onKeyEvent: PropTypes.func,
   isDisabled: PropTypes.bool,
   isExclusive: PropTypes.bool,
@@ -114,6 +117,7 @@ KeyboardEventHandler.propTypes = {
 
 KeyboardEventHandler.defaultProps = {
   handleKeys: [],
+  handleFocusableElements: false,
   handleEventType: 'keydown',
   onKeyEvent: () => null,
 };

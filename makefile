@@ -15,7 +15,7 @@ build: deps-node
 demo: deps-node
 	docker-compose run --rm app npm run build:demo
 
-start-demo: deps-node
+demo-dev: deps-node
 	node node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.demo.js  --host=0.0.0.0 --content-base=demo/dist --hot --inline --watch
 
 

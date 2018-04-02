@@ -165,11 +165,41 @@ const ComponentECodeWithKeyState = provideState({ namespace: Symbol(), name: 'ev
 const ComponentF = (props) => (<div className="card card-with-margin">
   <div className="card-header">I <strong>don't</strong> handle form controls or links by default</div>
   <div className="card-body ">
-    <small>By default, ey events on active elements (i.e. form controls, links, tab-enabled elements) are not handled.
+    <small>By default, key events on focusable elements (i.e. form controls, links, tab-enabled elements) are not handled.
       Handler will not interfere form controls.</small>
     <input type="text" placeholder="Please type" size="20"/>
   </div>
 </div>);
+
+
+const ComponentGCode = `&lt;KeyboardEventHandler
+      handleKeys={[&#39;all&#39;]}
+      handleFocusableElements
+      onKeyEvent={(key, e) =&gt; props.setEventKey(key)} /&gt;`;
+const ComponentG = (props) => (<div className="card card-with-margin">
+  <div className="card-header">I <strong>DO</strong> handle key events from all elements</div>
+  <div className="card-body ">
+    <small dangerouslySetInnerHTML={{ __html: ComponentGCode }}></small>
+    <KeyboardEventHandler
+      handleKeys={['all']}
+      handleFocusableElements
+      onKeyEvent={(key, e) => props.setEventKey(key)} />
+
+    <p>
+      If 'handleFocusableElements' props is 'true', key events sourced from all elements will be handled.
+    </p>
+
+    <input type="text" placeholder="Please type" size="20" />
+  </div>
+  <div className="card-footer text-success">key detected: <strong>
+    <mark>{props.eventKey}</mark>
+  </strong>
+  </div>
+</div>);
+
+const ComponentGCodeWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentG);
+
+
 
 ReactDom.render(
   <div className="row">
@@ -194,6 +224,9 @@ ReactDom.render(
     </div>
     <div className="col-12">
       <ComponentECodeWithKeyState />
+    </div>
+    <div className="col-12">
+      <ComponentGCodeWithKeyState />
     </div>
   </div>,
   document.querySelector('#root')

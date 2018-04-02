@@ -6,8 +6,8 @@ A React component for handling keyboard events (keyup, keydown and keypress<sup>
 ## Main features
 
 1. Supports combined keys ( e.g. CTRL + S and even CTRL + SHIFT + S )
-2. Supports multiple handler instances and provides an easy way to control the enable/disable status for each handler via props `isDisabled` and `isExclusive`.
-3. Provides easy-to-use key names and key alisa such as `numeric` and `alphanumeric` to free you from dealing with numeric key codes;
+2. Supports multiple handler instances and provides an easy way to control enable/disable status for each handler via props `isDisabled` and `isExclusive`.
+3. Provides easy-to-use key names and key alisa such as `numeric` and `alphanumeric` to free you from dealing with numeric key codes and/or browser compatibilities;
 4. Supports handling multiple keys (as an array) by one handler;
 
 
@@ -27,11 +27,11 @@ npm install react-keyboard-event-handler
 ## Handling global key events
 
 By default, `KeyboardEventHandler` only handles global key events sourced from `document.body`.
-That is, key events fired without any `activeElement` or focused element. It will not
+That is, key events fired without any focused element (`event.target`). It will not
 handle key events sourced from form controls (e.g. input ), links or any
-tab-enabled(focusable) elements (i.e. elements with `tabIndex` attribute).
+tab-enabled(focusable) elements (e.g. elements with `tabIndex` attribute). 
 
-Web browsers come with default keyboard behaviors with tab-enabled elements. It may be desirable
+Web browsers come with default keyboard behaviors for tab-enabled elements. It may be desirable
 to let the browser do its job in most cases.
 
 ```
@@ -45,6 +45,8 @@ const ComponentA = (props) => (<div>
 </div>);
 
 ```
+
+You can change this default, however, by setting `handleFocusableElements` prop to `true`;
 
 ## Handles key events sourced from children elements
 
@@ -71,18 +73,19 @@ For form control elements, React provides with `onKeyDown`, `onKeyPress` and `on
 
 # API summary
 
-Property|Description|Type|Default
+Property|Type|Default|Description
 ---|---|---|---
-handleKeys|An array of keys this handler should handle. <br/> There are also some handy alias for keys, see bellow for details.| Array | []
-handleEventType|Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'. <br /><sup>*</sup>**Note**: 'keypress' event only support printable keys. i.e. no support for modifier keys or 'tab', 'enter' etc.| String | keydown
-isDisabled|Enable/Disable handling keyboard events| Boolean | false
-isExclusive|When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling. | Boolean | false
-onKeyEvent|<p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl>| function | `() => null` 
-
+handleKeys| Array | [] |An array of keys this handler should handle. <br/> There are also some handy alias for keys, see bellow for details.
+handleEventType| String | keydown |Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'. <br /><sup>*</sup>**Note**: 'keypress' event only support printable keys. i.e. no support for modifier keys or 'tab', 'enter' etc.
+handleFocusableElements| Bool | false | By default, handler only handles key events sourced from `doucment.body`. When this props is set to `true`, it will also handle key events from all focusable elements. This props only apply when there's no children.
+isDisabled| Boolean | false |Enable/Disable handling keyboard events
+isExclusive| Boolean | false |When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling. 
+onKeyEvent| function | `() => null` | <p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl> 
+children| Any | null | If `KeyboardEventHandler` wraps around any children elements, it will handle and ONLY handle key events sourced from its descendant elements, including any form controls, links or tab-enabled elements. `handleFocusableElements` has no effect when `children` exists.
 
 # Key names and key alias
 
-The `handleKeys` prop accepts an array of key names.
+The `handleKeys` prop accepts an array of key names. Key names and key alias free developers from dealing with numeric char codes and/or key codes and  browser compatibility issues with `KeyboardEvent.code` and `KeyboardEvent.key`.
 
 1. Key names are **CASE INSENSITIVE**.
 
@@ -93,7 +96,7 @@ The `handleKeys` prop accepts an array of key names.
    - The first parameter to the `onKeyEvent` callback function will always use the exact string given in `handleKeys` prop regardless of its letter cases.
 
 1. It is recommended to always use lower case names just for consistency.
-1. You can also use key name alias like 'numbers' or 'alphanumeric'. When a keyboard event matches, the first (`key`) parameter to the callback function will be a lowercase key name (see bellow for all key names).  
+1. You can also use key name alias like 'numbers' or 'alphanumeric'. When a keyboard event matches, the first (`key`) parameter to the callback function will be a lowercase key name (see bellow for all key names).
 
 
 ### Common keys
