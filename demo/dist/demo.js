@@ -1351,12 +1351,64 @@ var ComponentF = function ComponentF(props) {
       _react2.default.createElement(
         'small',
         null,
-        'By default, ey events on active elements (i.e. form controls, links, tab-enabled elements) are not handled. Handler will not interfere form controls.'
+        'By default, key events on focusable elements (i.e. form controls, links, tab-enabled elements) are not handled. Handler will not interfere form controls.'
       ),
       _react2.default.createElement('input', { type: 'text', placeholder: 'Please type', size: '20' })
     )
   );
 };
+
+var ComponentGCode = '&lt;KeyboardEventHandler\n      handleKeys={[&#39;all&#39;]}\n      handleFocusableElements\n      onKeyEvent={(key, e) =&gt; props.setEventKey(key)} /&gt;';
+var ComponentG = function ComponentG(props) {
+  return _react2.default.createElement(
+    'div',
+    { className: 'card card-with-margin' },
+    _react2.default.createElement(
+      'div',
+      { className: 'card-header' },
+      'I ',
+      _react2.default.createElement(
+        'strong',
+        null,
+        'DO'
+      ),
+      ' handle key events from all elements'
+    ),
+    _react2.default.createElement(
+      'div',
+      { className: 'card-body ' },
+      _react2.default.createElement('small', { dangerouslySetInnerHTML: { __html: ComponentGCode } }),
+      _react2.default.createElement(_KeyboardEventHandler2.default, {
+        handleKeys: ['all'],
+        handleFocusableElements: true,
+        onKeyEvent: function onKeyEvent(key, e) {
+          return props.setEventKey(key);
+        } }),
+      _react2.default.createElement(
+        'p',
+        null,
+        'If \'handleFocusableElements\' props is \'true\', key events sourced from all elements will be handled.'
+      ),
+      _react2.default.createElement('input', { type: 'text', placeholder: 'Please type', size: '20' })
+    ),
+    _react2.default.createElement(
+      'div',
+      { className: 'card-footer text-success' },
+      'key detected: ',
+      _react2.default.createElement(
+        'strong',
+        null,
+        _react2.default.createElement(
+          'mark',
+          null,
+          props.eventKey
+        )
+      )
+    )
+  );
+};
+
+var ComponentGCodeWithKeyState = (0, _reactProvideState2.default)({ namespace: Symbol(), name: 'eventKey' })(ComponentG);
 
 _reactDom2.default.render(_react2.default.createElement(
   'div',
@@ -1396,6 +1448,11 @@ _reactDom2.default.render(_react2.default.createElement(
     'div',
     { className: 'col-12' },
     _react2.default.createElement(ComponentECodeWithKeyState, null)
+  ),
+  _react2.default.createElement(
+    'div',
+    { className: 'col-12' },
+    _react2.default.createElement(ComponentGCodeWithKeyState, null)
   )
 ), document.querySelector('#root'));
 
@@ -18800,7 +18857,8 @@ var KeyboardEventHandler = function (_React$Component) {
           handleKeys = _props2.handleKeys,
           onKeyEvent = _props2.onKeyEvent,
           handleEventType = _props2.handleEventType,
-          children = _props2.children;
+          children = _props2.children,
+          handleFocusableElements = _props2.handleFocusableElements;
 
 
       if (isDisabled) {
@@ -18820,9 +18878,9 @@ var KeyboardEventHandler = function (_React$Component) {
         return false;
       }
 
-      var isDocumentEvent = event.target === document.body;
+      var isEligibleEvent = event.target === document.body || handleFocusableElements;
       var isChildrenEvent = this.childrenContainer && this.childrenContainer.contains(event.target);
-      var isValidSource = children ? isChildrenEvent : isDocumentEvent;
+      var isValidSource = children ? isChildrenEvent : isEligibleEvent;
 
       if (!isValidSource) {
         return false;
@@ -18863,6 +18921,7 @@ exports.default = KeyboardEventHandler;
 KeyboardEventHandler.propTypes = {
   handleKeys: _propTypes2.default.array,
   handleEventType: _propTypes2.default.oneOf(['keydown', 'keyup', 'keypress']),
+  handleFocusableElements: _propTypes2.default.bool,
   onKeyEvent: _propTypes2.default.func,
   isDisabled: _propTypes2.default.bool,
   isExclusive: _propTypes2.default.bool,
@@ -18871,6 +18930,7 @@ KeyboardEventHandler.propTypes = {
 
 KeyboardEventHandler.defaultProps = {
   handleKeys: [],
+  handleFocusableElements: false,
   handleEventType: 'keydown',
   onKeyEvent: function onKeyEvent() {
     return null;

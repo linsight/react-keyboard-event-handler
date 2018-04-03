@@ -48,7 +48,7 @@ const ComponentA = (props) => (<div>
 
 You can change this default, however, by setting `handleFocusableElements` prop to `true`;
 
-## Handles key events sourced from children elements
+## Handling key events sourced from children elements
 
 If `KeyboardEventHandler` wraps around any children elements, it will handle and ONLY handle key events sourced from its descendant elements, including any form controls, links or tab-enabled elements.
 
