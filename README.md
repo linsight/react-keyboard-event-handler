@@ -62,7 +62,7 @@ const ComponentA = (props) => (<div>
     onKeyEvent={(key, e) => console.log(`do something upon keydown event of ${key}`)} >
     <input type="text" placeholder="Key events will be handled"/>
     <a href="#" >Key events from focusable element will be handled</a>
-  </KeyboardEventHanlder>
+  </KeyboardEventHandler>
 </div>);
 
 ```
