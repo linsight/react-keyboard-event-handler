@@ -1,0 +1,6 @@
+node_modules
+package.json.bak*
+.idea
+.tmp
+scripts-dist
+.babelrc
