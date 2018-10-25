@@ -1,30 +1,32 @@
 const commonKeys = {
-  backspace: 8,
-  del: 46,
-  delete: 46,
-  tab: 9,
-  enter: 13,
-  return: 13,
-  esc: 27,
-  space: 32,
-  pageup: 33,
-  pagedown: 34,
-  end: 35,
-  home: 36,
-  left: 37,
-  up: 38,
-  right: 39,
-  down: 40,
-  ';': 186,
-  '=': 187,
-  ',': 188,
-  '-': 189,
-  '.': 190,
-  '/': 191,
-  '`': 192,
-  '[': 219,
-  '\\': 220,
-  ']': 221,
+  backspace: [8],
+  del: [46],
+  delete: [46],
+  tab: [9],
+  enter: [13],
+  return: [13],
+  esc: [27],
+  space: [32],
+  pageup: [33],
+  pagedown: [34],
+  end: [35],
+  home: [36],
+  left: [37],
+  up: [38],
+  right: [39],
+  down: [40],
+  ';': [186],
+  '=': [187],
+  ',': [188],
+  '-': [189, 109],
+  '.': [190, 110],
+  '/': [191, 111],
+  '`': [192],
+  '[': [219],
+  '\\': [220],
+  ']': [221],
+  '*': [106],
+  '+': [107],
 };
 
 const commonKeysInUpperCases = Object.keys(commonKeys)
@@ -34,15 +36,15 @@ const commonKeysInUpperCases = Object.keys(commonKeys)
 
 const numberKeys = '0123456789'.split('')
   .reduce((accumulator, current, index) =>
-    Object.assign(accumulator, { [current]: index + 48 }), {});
+    Object.assign(accumulator, { [current]: [index + 48, index + 96] }), {});
 
 
 const letterKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
   .reduce((accumulator, current, index) =>
     Object.assign(
       accumulator,
-      { [current.toLowerCase()]: index + 65 },
-      { [current]: index + 65 }), {});
+      { [current.toLowerCase()]: [index + 65] },
+      { [current]: [index + 65] }), {});
 
 
 const modifierKeys = {
@@ -71,7 +73,7 @@ export function matchKeyEvent(event, keyName) {
   const eventType = event.type;
   const eventModifiers = Object.keys(modifierKeys).filter(modKey => event[`${modKey}Key`]).sort();
   const cleanKeyName = keyName.toLowerCase().trim();
-  const keyNameParts = cleanKeyName.split(/\s?\+\s?/); // e.g. 'crtl + a'
+  const keyNameParts = cleanKeyName === '+' ? ['+'] : cleanKeyName.split(/\s?\+\s?/); // e.g. 'crtl + a'
   const mainKeyName = keyNameParts.pop();
   const mainKeyCode = AllKeys[mainKeyName];
   const modifierKeyNames = keyNameParts;
@@ -82,7 +84,7 @@ export function matchKeyEvent(event, keyName) {
   }
 
   if (modifierKeyNames.length === 0 && eventModifiers.length === 0) {
-    return eventKeyCode === mainKeyCode;
+    return mainKeyCode.indexOf(eventKeyCode) >= 0;
   }
 
   if (modifierKeyNames.length > 0 && eventModifiers.length > 0) {
@@ -90,7 +92,7 @@ export function matchKeyEvent(event, keyName) {
     const modifiersMatched = modifiers.length === eventModifiers.length &&
       modifiers.every((modKey, index) => eventModifiers[index] === modKey);
 
-    return eventKeyCode === mainKeyCode && modifiersMatched;
+    return mainKeyCode.indexOf(eventKeyCode) >= 0 && modifiersMatched;
   }
 
   return false;
@@ -98,8 +100,9 @@ export function matchKeyEvent(event, keyName) {
 
 export function findMatchedKey(event, keys) {
   const lookupAlias = (k) => {
-    const found = aliasKeys[k.toLowerCase()];
-    return found ? [...found, k.toLowerCase()] : k;
+    const lowerK = k.toLowerCase();
+    const found = aliasKeys[lowerK];
+    return found ? found : [k];
   };
 
   const expandedKeys = keys.map(lookupAlias).reduce((a, b) => a.concat(b), []);

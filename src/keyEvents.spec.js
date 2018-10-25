@@ -4,15 +4,17 @@ import { AllKeys, matchKeyEvent, findMatchedKey } from './keyEvents';
 describe('keyEvents', () => {
   describe('AllKeys', () => {
     it('should be contain key code maps', () => {
-      expect(AllKeys.a).to.equal(65);
-      expect(AllKeys.A).to.equal(65);
-      expect(AllKeys.down).to.equal(40);
-      expect(AllKeys.DOWN).to.equal(40);
-      expect(AllKeys.delete).to.equal(46);
-      expect(AllKeys.DEL).to.equal(46);
-      expect(AllKeys['=']).to.equal(187);
-      expect(AllKeys['0']).to.equal(48);
-      expect(AllKeys['9']).to.equal(57);
+      expect(AllKeys.a).to.deep.equal([65]);
+      expect(AllKeys.A).to.deep.equal([65]);
+      expect(AllKeys.down).to.deep.equal([40]);
+      expect(AllKeys.DOWN).to.deep.equal([40]);
+      expect(AllKeys.delete).to.deep.equal([46]);
+      expect(AllKeys.DEL).to.deep.equal([46]);
+      expect(AllKeys['=']).to.deep.equal([187]);
+      expect(AllKeys['0']).to.deep.equal([48, 96]);
+      expect(AllKeys['9']).to.deep.equal([57, 105]);
+      expect(AllKeys['+']).to.deep.equal([107]);
+      expect(AllKeys['*']).to.deep.equal([106]);
     });
   });
 
@@ -65,6 +67,7 @@ describe('keyEvents', () => {
 
     it('should find alias key', () => {
       expect(findMatchedKey({ which: 48 }, ['numeric', '1'])).to.equal('0');
+      expect(findMatchedKey({ which: 96 }, ['numeric', '1'])).to.equal('0');
       expect(findMatchedKey({ which: 65 }, ['alphabetic', 'c'])).to.equal('a');
       expect(findMatchedKey({ which: 66 }, ['alphanumeric', 'c'])).to.equal('b');
       expect(findMatchedKey({ which: 49 }, ['alphanumeric', 'c'])).to.equal('1');

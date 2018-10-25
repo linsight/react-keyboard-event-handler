@@ -29,7 +29,7 @@ npm install react-keyboard-event-handler
 By default, `KeyboardEventHandler` only handles global key events sourced from `document.body`.
 That is, key events fired without any focused element (`event.target`). It will not
 handle key events sourced from form controls (e.g. input ), links or any
-tab-enabled(focusable) elements (e.g. elements with `tabIndex` attribute). 
+tab-enabled(focusable) elements (e.g. elements with `tabIndex` attribute).
 
 Web browsers come with default keyboard behaviors for tab-enabled elements. It may be desirable
 to let the browser do its job in most cases.
@@ -79,8 +79,8 @@ handleKeys| Array | [] |An array of keys this handler should handle. <br/> There
 handleEventType| String | keydown |Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'. <br /><sup>*</sup>**Note**: 'keypress' event only support printable keys. i.e. no support for modifier keys or 'tab', 'enter' etc.
 handleFocusableElements| Bool | false | By default, handler only handles key events sourced from `doucment.body`. When this props is set to `true`, it will also handle key events from all focusable elements. This props only apply when there's no children.
 isDisabled| Boolean | false |Enable/Disable handling keyboard events
-isExclusive| Boolean | false |When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling. 
-onKeyEvent| function | `() => null` | <p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl> 
+isExclusive| Boolean | false |When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling.
+onKeyEvent| function | `() => null` | <p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl>
 children| Any | null | If `KeyboardEventHandler` wraps around any children elements, it will handle and ONLY handle key events sourced from its descendant elements, including any form controls, links or tab-enabled elements. `handleFocusableElements` has no effect when `children` exists.
 
 # Key names and key alias
@@ -113,7 +113,7 @@ You can handle one of more common keys by using an array of their names.
 Key name|Description / key code
 ---|---
 a, b, ... z | letter keys, 65 ~ 90
-0, 1, ... 9 | number keys 48 ~ 57
+0, 1, ... 9 | number keys 48 ~ 57 and 96 ~ 105
 backspace|8
 del/delete| 46
 tab| 9

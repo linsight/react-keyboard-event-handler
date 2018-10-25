@@ -54,7 +54,7 @@ const ComponentCWithKeyState = provideState({ namespace: Symbol(), name: 'eventK
 const ComponentDCode =
   "&lt;KeyboardEventHandler handleKeys={['ctrl+a', 'alt+b', 'meta+c']} onKeyEvent={(key) =&gt; props.setEventKey(key)} /&gt;";
 const ComponentD = (props) => (<div className="card card-with-margin">
-  <div className="card-header">I handle <strong>'ctrl+a', 'alt+b', 'meta+c'</strong></div>
+  <div className="card-header">I handle <strong>'ctrl+a', 'alt+b', and 'meta+c'</strong></div>
   <div className="card-body ">
     <small dangerouslySetInnerHTML={{ __html: ComponentDCode }}></small>
   </div>
