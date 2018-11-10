@@ -10,7 +10,7 @@ describe('keyEvents', () => {
       expect(AllKeys.DOWN).to.deep.equal([40]);
       expect(AllKeys.delete).to.deep.equal([46]);
       expect(AllKeys.DEL).to.deep.equal([46]);
-      expect(AllKeys['=']).to.deep.equal([187]);
+      expect(AllKeys['=']).to.deep.equal([187, 61]);
       expect(AllKeys['0']).to.deep.equal([48, 96]);
       expect(AllKeys['9']).to.deep.equal([57, 105]);
       expect(AllKeys['+']).to.deep.equal([107]);
@@ -27,6 +27,7 @@ describe('keyEvents', () => {
       expect(matchKeyEvent({ which: 40 }, 'DOWN')).to.be.true;
       expect(matchKeyEvent({ which: 65 }, 'a')).to.be.true;
       expect(matchKeyEvent({ which: 65 }, 'A')).to.be.true;
+      expect(matchKeyEvent({ which: 16 }, 'shift')).to.be.true;
     });
 
     it('should match modified key event by name', () => {
@@ -71,6 +72,7 @@ describe('keyEvents', () => {
       expect(findMatchedKey({ which: 65 }, ['alphabetic', 'c'])).to.equal('a');
       expect(findMatchedKey({ which: 66 }, ['alphanumeric', 'c'])).to.equal('b');
       expect(findMatchedKey({ which: 49 }, ['alphanumeric', 'c'])).to.equal('1');
+      expect(findMatchedKey({ which: 113 }, ['function', 'c'])).to.equal('f2');
       expect(findMatchedKey({ which: 49 }, ['all'])).to.equal('1');
       expect(findMatchedKey({ which: 46 }, ['all'])).to.equal('del');
     });

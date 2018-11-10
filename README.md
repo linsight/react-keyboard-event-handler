@@ -5,10 +5,12 @@ A React component for handling keyboard events (keyup, keydown and keypress<sup>
 
 ## Main features
 
-1. Supports combined keys ( e.g. CTRL + S and even CTRL + SHIFT + S )
-2. Supports multiple handler instances and provides an easy way to control enable/disable status for each handler via props `isDisabled` and `isExclusive`.
-3. Provides easy-to-use key names and key alisa such as `numeric` and `alphanumeric` to free you from dealing with numeric key codes and/or browser compatibilities;
-4. Supports handling multiple keys (as an array) by one handler;
+1. Supports combined keys ( e.g. CTRL + S and even CTRL + SHIFT + S );
+1. Supports handling midifier key alone (e.g. handle pressing 'ctrl' key);
+1. Supports almost all keys including function keys (e.g. 'F1');
+1. Provides easy-to-use and consistent key names to free you from dealing with numeric key codes and/or browser compatibilities;
+1. Supports key alias such 'alphanumeric' and 'all' as short cuts for handling multiple keys;
+1. Supports multiple handler instances and provides an easy way to control enable/disable status for each handler via props `isDisabled` and `isExclusive`.
 
 
 ## Live demo
@@ -31,7 +33,7 @@ That is, key events fired without any focused element (`event.target`). It will 
 handle key events sourced from form controls (e.g. input ), links or any
 tab-enabled(focusable) elements (e.g. elements with `tabIndex` attribute).
 
-Web browsers come with default keyboard behaviors for tab-enabled elements. It may be desirable
+Web browsers come with default keyboard behaviors for tab-enabled elements. It may be more appropriate
 to let the browser do its job in most cases.
 
 ```
@@ -79,24 +81,17 @@ handleKeys| Array | [] |An array of keys this handler should handle. <br/> There
 handleEventType| String | keydown |Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'. <br /><sup>*</sup>**Note**: 'keypress' event only support printable keys. i.e. no support for modifier keys or 'tab', 'enter' etc.
 handleFocusableElements| Bool | false | By default, handler only handles key events sourced from `doucment.body`. When this props is set to `true`, it will also handle key events from all focusable elements. This props only apply when there's no children.
 isDisabled| Boolean | false |Enable/Disable handling keyboard events
-isExclusive| Boolean | false |When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, suppressing any other handlers on a page when a modal opens with its own keyboard event handling.
-onKeyEvent| function | `() => null` | <p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key string as one of the elements in `HandleKeys` props that matches the current keyboard event. <br />If alias key name is used, it will be the lowercase key name (see bellow) matching the event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code.</dd></dl>
+isExclusive| Boolean | false |When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, for suppressing any other handlers on a page when a modal opens with its own keyboard event handling.
+onKeyEvent| function | `() => null` | <p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key name matches the current keyboard event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code. This is useful for handling keys that are not supported (i.e. does not have a key name defined for the keys).</dd></dl>
 children| Any | null | If `KeyboardEventHandler` wraps around any children elements, it will handle and ONLY handle key events sourced from its descendant elements, including any form controls, links or tab-enabled elements. `handleFocusableElements` has no effect when `children` exists.
 
 # Key names and key alias
 
-The `handleKeys` prop accepts an array of key names. Key names and key alias free developers from dealing with numeric char codes and/or key codes and  browser compatibility issues with `KeyboardEvent.code` and `KeyboardEvent.key`.
+The `handleKeys` prop accepts an array of key names. Key names and key alias free developers from dealing with numeric char codes and/or key codes and  browser compatibility issues with `KeyboardEvent.code` and `KeyboardEvent.key`. (Ref: [JavaScript Madness: Keyboard Events](https://unixpapa.com/js/key.html))
 
-1. Key names are **CASE INSENSITIVE**.
-
-   - Key names given in the `heandleKeys` prop will be converted to lower case before matching a keyboard event;
-   - Therefore, 'A' is the same as 'a' and 'ALT' or 'Alt' is the same as 'alt';
-   - Event if you set `heandleKeys` to handle lowercase 'a', it will still handles key event for 'A' with caps lock on.
-   - To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
-   - The first parameter to the `onKeyEvent` callback function will always use the exact string given in `handleKeys` prop regardless of its letter cases. i.e. It will be 'A' if `handleKeys={['A']}`
-
-1. It is recommended to always use lower case names just for consistency.
-1. You can also use key name alias like 'numbers' or 'alphanumeric'. When a keyboard event matches, the first (`key`) parameter to the callback function will be a lowercase key name (see bellow for all key names).
+- Key names are in **LOWER CASE** for consistency. `heandleKeys=['a']` will still handles key event for 'A' with caps lock on.
+- To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
+- You can also use key name alias like 'numbers' or 'alphanumeric'.
 
 
 ### Common keys
@@ -112,10 +107,12 @@ You can handle one of more common keys by using an array of their names.
 
 Key name|Description / key code
 ---|---
-a, b, ... z | letter keys, 65 ~ 90
-0, 1, ... 9 | number keys 48 ~ 57
+a, b, ... z | letter keys, 65 ~ 90 and 97 ~ 112
+0, 1, ... 9 | number keys 48 ~ 57 and 41 , 96 ~ 105
+f1, f2, ... f19| function keys 112 ~ 130
 backspace|8
 del/delete| 46
+ins/insert| 45
 tab| 9
 enter/return| 13
 esc| 27
@@ -128,21 +125,27 @@ left| 37
 up| 38
 right| 39
 down| 40
-;| 186
-=| 187
-,| 188
--| 189
-.| 190
-/| 191
+shift| 16
+ctrl| 17
+alt| 18
+cap| 20
+num| 144 | Num Lock
+clear| 12
+meta| 91 | Meta, Win, Window, Cmd, Command
+;| 186, 59
+=| 187, 61
+,| 188, 44
+-| 189, 45, 173, 109
+.| 190, 110
+/| 191, 111
 `| 192
 [| 219
 &#92;| 220
 ]| 221
-+| 107
 *| 106
++| 107
 
-**Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`.
-To match native keyboard event with modifiers, read the next section.
+**Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`. e.g. `handleKeys=['a']` will not handler events with combined keys 'Ctrl' and 'a'. To match native keyboard event with modifiers, read the next section.
 
 ### Modifier keys
 
@@ -164,7 +167,10 @@ shift| shift key
 meta| meta, cmd, Window, command key
 alt| option, alt key
 
-Tips: Modifier keys only work well with common keys a-z. OS and/or browsers use other combinations for other purposes. For example, `cmd + right` is used as the shortcut to navigate 'forward' in some browsers.
+**Tips**:
+
+- Modifier keys only work well with common keys a-z. OS and/or browsers use other combinations for other purposes. For example, `cmd + right` is used as the shortcut to navigate 'forward' in some browsers.
+- Modifier keys are themself common keys. You can handle key event of single 'ctrl' key with `handleKeys=['ctrl']`;
 
 ### Key alias
 
@@ -184,14 +190,16 @@ Alias|Keys|Description
 'alphabetic' | 'a', 'b', ...'z'| 26 letter keys
 'numeric' | '0', '1', ....'9 | 10 number keys
 'alphanumeric' | 'a'...'z', '0'...'9' |  36 alphanumeric keys
-'all' | n/a | Handle all keyboard events. If a key event does not match any common keys defined above, the `key` parameter to the callback function will have the value of 'other'.
+'function' | 'f1'...'f19' | 19 Fn keys
+'all' | n/a | Handle all keyboard events. If a key event does not match any common keys defined above, the `key` parameter to the callback function will have the value of 'other'. You can use the second parameter (the raw key event object) to implemnt you own key handling logic.
 
 
 __Note__:
+
 1. Alias keys are alias to a list of common keys. Expect the same behavior as if the respective array of of common key names is in use.
 1. When a keyboard event matches, the first (`key`) parameter to the callback function will be the matched lowercase common key name. e.g. `a` for alias `numeric`.
-1. Alias key names do not work with modifiers.
-1. You can mix alias with common keys. e.g. `['numeric', 'a', 'enter']`
+1. Alias key names do not work with modifiers. e.g. `handleKeys=['ctrl+numeric'] // doesn't work`
+1. You can mix alias with common keys. e.g. `handleKeys=['numeric', 'a', 'enter', 'ctrl+b']`
 
 
 
