@@ -9,6 +9,9 @@ test-watch: deps-node
 test: deps-node
 	docker-compose run --rm app npm test
 
+lint: deps-node
+	docker-compose run app npm run lint
+
 build: deps-node
 	docker-compose run --rm app npm run build
 
