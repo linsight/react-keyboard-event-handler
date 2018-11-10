@@ -7,6 +7,7 @@
     "build": "webpack --env dev && webpack --env build",
     "build:demo": "webpack --env dev && webpack --config webpack.config.demo.js",
     "dev": "webpack --progress --colors --watch --env dev",
+    "lint": "eslint ./src/**.js",
     "test": "mocha --require babel-core/register -r jsdom-global/register --colors ./src/*.spec.js",
     "test:watch": "mocha --require babel-core/register -r jsdom-global/register --colors -w ./src/*.spec.js"
   },
@@ -43,7 +44,7 @@
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
     "eslint": "^4.19.1",
-    "eslint-loader": "^1.9.0",
+    "eslint-loader": "^2.1.1",
     "html-webpack-plugin": "^3.2.0",
     "jsdom": "^11.12.0",
     "jsdom-global": "^3.0.2",
@@ -53,8 +54,10 @@
     "react-provide-state": "^1.0.5",
     "simulate-event": "^1.4.0",
     "sinon": "^4.5.0",
-    "webpack": "^3.12.0",
-    "webpack-dev-server": "^2.11.3",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10",
     "yargs": "^11.1.0"
   },
   "peerDependencies": {

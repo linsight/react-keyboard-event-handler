@@ -6,6 +6,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
+  mode: 'development',
   entry: __dirname + '/demo/src/demo.js',
   output: {
     path: __dirname + '/demo/dist',

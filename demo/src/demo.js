@@ -50,6 +50,28 @@ const ComponentC = (props) => (<div className="card card-with-margin">
 </div>);
 const ComponentCWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentC);
 
+const ComponentJCode =
+  "&lt;KeyboardEventHandler handleKeys={['all']} onKeyEvent={(key, e) =&gt; props.setEventData({key, e})} /&gt;";
+const ComponentJ = (props) => (<div className="card card-with-margin">
+  <div className="card-header">Using the <strong>raw</strong> key event</div>
+  <div className="card-body ">
+    <p><small className="text-success">You can use the raw key event if you want to handle keys outside of the provided key names/alias. E.g. You keyboard has special keys.</small></p>
+    <small dangerouslySetInnerHTML={{ __html: ComponentJCode }}></small>
+  </div>
+  <div className="card-footer">
+    <table>
+      <tbody>
+      <tr><td className="text-success">key</td><td>{props.eventData.key}</td></tr>
+      <tr><td className="text-success">event.key</td><td>{props.eventData.e.key}</td></tr>
+      <tr><td className="text-success">event.which</td><td>{props.eventData.e.which}</td></tr>
+      <tr><td className="text-success">event.code</td><td>{props.eventData.e.code}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <KeyboardEventHandler handleKeys={['all']} onKeyEvent={(key, e) => props.setEventData({key, e})} />
+</div>);
+const ComponentJWithKeyState = provideState({ namespace: Symbol(), name: 'eventData', initValue:{key: null, e: {}}})(ComponentJ);
+
 
 const ComponentDCode =
   "&lt;KeyboardEventHandler handleKeys={['ctrl+a', 'alt+b', 'meta+c']} onKeyEvent={(key) =&gt; props.setEventKey(key)} /&gt;";
@@ -65,6 +87,39 @@ const ComponentD = (props) => (<div className="card card-with-margin">
                         onKeyEvent={(key, e) => props.setEventKey(key)} />
 </div>);
 const ComponentDWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentD);
+
+
+const ComponentHCode =
+  "&lt;KeyboardEventHandler handleKeys={['function']} onKeyEvent={(key) =&gt; props.setEventKey(key)} /&gt;";
+const ComponentH = (props) => (<div className="card card-with-margin">
+  <div className="card-header">I handle <strong>'f1' ... 'f19'</strong> function keys</div>
+  <div className="card-body ">
+    <small dangerouslySetInnerHTML={{ __html: ComponentHCode }}></small>
+  </div>
+  <div className="card-footer text-success">key detected: <strong>
+    <mark>{props.eventKey}</mark>
+  </strong></div>
+  <KeyboardEventHandler handleKeys={['function']}
+                        onKeyEvent={(key, e) => props.setEventKey(key)} />
+</div>);
+const ComponentHWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentH);
+
+
+const ComponentICode =
+  "&lt;KeyboardEventHandler handleKeys={['alphanumeric']} onKeyEvent={(key) =&gt; props.setEventKey(key)} /&gt;";
+const ComponentI = (props) => (<div className="card card-with-margin">
+  <div className="card-header">I handle <strong>alphanumeric</strong> keys</div>
+  <div className="card-body ">
+    <small dangerouslySetInnerHTML={{ __html: ComponentICode }}></small>
+  </div>
+  <div className="card-footer text-success">key detected: <strong>
+    <mark>{props.eventKey}</mark>
+  </strong></div>
+  <KeyboardEventHandler handleKeys={['alphanumeric']}
+                        onKeyEvent={(key, e) => props.setEventKey(key)} />
+</div>);
+const ComponentIWithKeyState = provideState({ namespace: Symbol(), name: 'eventKey' })(ComponentI);
+
 
 
 const modalStateConfig = { namespace: Symbol(), name: 'show' };
@@ -216,11 +271,20 @@ ReactDom.render(
       <ComponentDWithKeyState />
     </div>
     <div className="col-4">
+      <ComponentHWithKeyState />
+    </div>
+    <div className="col-4">
+      <ComponentIWithKeyState />
+    </div>
+    <div className="col-4">
       <ComponentTriggerWithKeyState />
       <ComponentModalWithKeyState />
     </div>
     <div className="col-4">
       <ComponentF />
+    </div>
+    <div className="col-12">
+      <ComponentJWithKeyState />
     </div>
     <div className="col-12">
       <ComponentECodeWithKeyState />

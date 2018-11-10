@@ -2,6 +2,8 @@ const commonKeys = {
   backspace: [8],
   del: [46],
   delete: [46],
+  ins: [45],
+  insert: [45],
   tab: [9],
   enter: [13],
   return: [13],
@@ -15,10 +17,17 @@ const commonKeys = {
   up: [38],
   right: [39],
   down: [40],
-  ';': [186],
-  '=': [187],
-  ',': [188],
-  '-': [189, 109],
+  shift: [16],
+  ctrl: [17],
+  alt: [18],
+  cap: [20],
+  num: [144],
+  clear: [12],
+  meta: [91],
+  ';': [186, 59],
+  '=': [187, 61],
+  ',': [188, 44],
+  '-': [189, 45, 173, 109],
   '.': [190, 110],
   '/': [191, 111],
   '`': [192],
@@ -46,6 +55,10 @@ const letterKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
       { [current.toLowerCase()]: [index + 65] },
       { [current]: [index + 65] }), {});
 
+const fnKeys = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19'.split(',')
+  .reduce((accumulator, current, index) =>
+    Object.assign(accumulator, { [`f${current}`]: [index + 112] }), {});
+
 
 const modifierKeys = {
   control: 'ctrl',
@@ -58,7 +71,7 @@ const modifierKeys = {
   alt: 'alt',
 };
 
-export const AllKeys = Object.assign({}, commonKeys, commonKeysInUpperCases, numberKeys, letterKeys);
+export const AllKeys = Object.assign({}, commonKeys, commonKeysInUpperCases, numberKeys, letterKeys, fnKeys);
 const alphanumericKeys = Object.assign({}, numberKeys, letterKeys);
 
 const aliasKeys = {
@@ -66,6 +79,7 @@ const aliasKeys = {
   alphanumeric: Object.keys(alphanumericKeys),
   numeric: Object.keys(numberKeys),
   alphabetic: Object.keys(letterKeys),
+  function: Object.keys(fnKeys),
 };
 
 export function matchKeyEvent(event, keyName) {
@@ -95,6 +109,10 @@ export function matchKeyEvent(event, keyName) {
     return mainKeyCode.indexOf(eventKeyCode) >= 0 && modifiersMatched;
   }
 
+  if (modifierKeyNames.length == 0 && eventModifiers.length === 1) {
+    return mainKeyName === eventModifiers[0];
+  }
+
   return false;
 }
 
@@ -109,7 +127,7 @@ export function findMatchedKey(event, keys) {
 
   let matchedKey = expandedKeys.find(k => matchKeyEvent(event, k));
 
-  if (!matchedKey && expandedKeys.includes('all')) {
+  if (!matchedKey && keys.includes('all')) {
     matchedKey = 'other';
   }
 
