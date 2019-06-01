@@ -99,9 +99,13 @@ export default class KeyboardEventHandler extends React.Component {
 
   render() {
     const { children } = this.props;
+    const passProps = Object.assign({}, this.props)
+    for (const key of Object.keys(KeyboardEventHandler.propTypes)) {
+      delete passProps[key]
+    }
     return children ? (<span ref={ e => {
         this.childrenContainer = e;
-      }}>{children}</span>) : null;
+      }} {...passProps}>{children}</span>) : null;
   }
 }
 
