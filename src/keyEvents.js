@@ -28,6 +28,7 @@ const commonKeys = {
   '=': [187, 61],
   ',': [188, 44],
   '-': [189, 45, 173, 109],
+  'less': [189, 45, 173, 109],
   '.': [190, 110],
   '/': [191, 111],
   '`': [192],
@@ -36,6 +37,7 @@ const commonKeys = {
   ']': [221],
   '*': [106],
   '+': [107],
+  'more': [107],
 };
 
 const commonKeysInUpperCases = Object.keys(commonKeys)
