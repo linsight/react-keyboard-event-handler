@@ -129,7 +129,7 @@ You can handle one of more common keys by using an array of their names.
 | ;               | 186, 59                               |
 | =               | 187, 61                               |
 | ,               | 188, 44                               |
-| -               | 189, 45, 173, 109                     |
+| - / minus       | 189, 45, 173, 109                     |
 | .               | 190, 110                              |
 | /               | 191, 111                              |
 | `| 192          |
@@ -137,13 +137,13 @@ You can handle one of more common keys by using an array of their names.
 | &#92;           | 220                                   |
 | ]               | 221                                   |
 | \*              | 106                                   |
-| +               | 107                                   |
+| + / plus        | 107                                   |
 
 **Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`. e.g. `handleKeys=['a']` will not handler events with combined keys 'Ctrl' and 'a'. To match native keyboard event with modifiers, read the next section.
 
 ### Modifier keys
 
-You can handle modifier key combined with a common keys by using key name in the format of `ctrl+a` or `ctrl+shift+a`:
+You can handle modifier key combined with a common keys by using key name in the format of `ctrl+a` or `ctrl+shift+a`. To use the `+` common key with modifier keys, use the alias key 'plus'. e.g. `ctrl+plus`.
 
 ```
 <KeyboardEventHandler
