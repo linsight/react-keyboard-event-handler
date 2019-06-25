@@ -14,9 +14,10 @@ make test
 make test-watch
 ```
 
-## Build demo app before release
+## Build app and demo before release
 
 ```
+make build
 make demo
 ```
 

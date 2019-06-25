@@ -5,7 +5,7 @@ A React component for handling keyboard events (keyup, keydown and keypress<sup>
 ## Main features
 
 1. Supports combined keys ( e.g. CTRL + S and even CTRL + SHIFT + S );
-1. Supports handling midifier key alone (e.g. handle pressing 'ctrl' key);
+1. Supports handling modifier key alone (e.g. handle pressing 'ctrl' key);
 1. Supports almost all keys including function keys (e.g. 'F1');
 1. Provides easy-to-use and consistent key names to free you from dealing with numeric key codes and/or browser compatibilities;
 1. Supports key alias such 'alphanumeric' and 'all' as short cuts for handling multiple keys;
@@ -90,7 +90,7 @@ The `handleKeys` prop accepts an array of key names. Key names and key alias fre
 
 ### Common keys
 
-You can handle one of more common keys by using an array of their names.
+You can handle one or more common keys by using an array of their names.
 
 ```
 <KeyboardEventHandler
@@ -123,13 +123,13 @@ You can handle one of more common keys by using an array of their names.
 | ctrl            | 17                                    |
 | alt             | 18                                    |
 | cap             | 20                                    |
-| num             | 144                                   | Num Lock |
+| num             | Num Lock, 144                         |
 | clear           | 12                                    |
-| meta            | 91                                    | Meta, Win, Window, Cmd, Command |
+| meta            | Meta, Win, Window, Cmd, Command, 91   |
 | ;               | 186, 59                               |
 | =               | 187, 61                               |
 | ,               | 188, 44                               |
-| - / minus       | 189, 45, 173, 109                     |
+| -/minus         | 189, 45, 173, 109                     |
 | .               | 190, 110                              |
 | /               | 191, 111                              |
 | `| 192          |
@@ -137,7 +137,7 @@ You can handle one of more common keys by using an array of their names.
 | &#92;           | 220                                   |
 | ]               | 221                                   |
 | \*              | 106                                   |
-| + / plus        | 107                                   |
+| +/plus          | 107                                   |
 
 **Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`. e.g. `handleKeys=['a']` will not handler events with combined keys 'Ctrl' and 'a'. To match native keyboard event with modifiers, read the next section.
 
@@ -164,9 +164,9 @@ You can handle modifier key combined with a common keys by using key name in the
 - Modifier keys only work well with common keys a-z. OS and/or browsers use other combinations for other purposes. For example, `cmd + right` is used as the shortcut to navigate 'forward' in some browsers.
 - Modifier keys are themself common keys. You can handle key event of single 'ctrl' key with `handleKeys=['ctrl']`;
 
-### Key alias
+### Key set alias
 
-Key alias provide any easy way to specify common key sets. It is useful when you want to handle multiple keys
+Key set alias provide any easy way to specify common key sets. It is useful when you want to handle multiple keys
 and put all handling logic for each key inside the handler callback function.
 
 ```
@@ -186,7 +186,7 @@ and put all handling logic for each key inside the handler callback function.
 
 **Note**:
 
-1. Alias keys are alias to a list of common keys. Expect the same behavior as if the respective array of of common key names is in use.
+1. Alias keys are alias to a list of common keys. Expect the same behavior as if the respective array of common key names is in use.
 1. When a keyboard event matches, the first (`key`) parameter to the callback function will be the matched lowercase common key name. e.g. `a` for alias `numeric`.
 1. Alias key names do not work with modifiers. e.g. `handleKeys=['ctrl+numeric'] // doesn't work`
 1. You can mix alias with common keys. e.g. `handleKeys=['numeric', 'a', 'enter', 'ctrl+b']`
@@ -229,7 +229,7 @@ Enzyme has two main limitations (ref: https://github.com/airbnb/enzyme/blob/mast
 
 2. Event propagation is not supported. However, Key events on wrapped components are bubbled up and handled by at the document level by this component.
 
-Therefore, when teting with Enzyme:
+Therefore, when testing with Enzyme:
 
 1. We can only simulate keyboard events fired from `document.body`;
 1. `mount` is required.
