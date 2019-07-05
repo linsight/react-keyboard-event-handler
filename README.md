@@ -84,7 +84,7 @@ For form control elements, React provides with `onKeyDown`, `onKeyPress` and `on
 
 The `handleKeys` prop accepts an array of key names. Key names and key alias free developers from dealing with numeric char codes and/or key codes and browser compatibility issues with `KeyboardEvent.code` and `KeyboardEvent.key`. (Ref: [JavaScript Madness: Keyboard Events](https://unixpapa.com/js/key.html))
 
-- Key names are in **LOWER CASE** for consistency. `heandleKeys=['a']` will still handles key event for 'A' with caps lock on.
+- Key names are in **LOWER CASE** for consistency. `handleKeys=['a']` will still handles key event for 'A' with caps lock on.
 - To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
 - You can also use key name alias like 'numbers' or 'alphanumeric'.
 
