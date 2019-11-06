@@ -1,67 +1,53 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { findMatchedKey } from './keyEvents';
 
-let exclusiveHandlers = [];
+// let exclusiveHandlers = [];
 
-export default class KeyboardEventHandler extends React.Component {
-  constructor(props) {
-    super(props);
+export default KeyboardEventHandler = ({
+  handleKeys,
+  handleEventType,
+  handleFocusableElements,
+  onKeyEvent,
+  isDisabled,
+  isExclusive,
+  children,
+  ...props,
+}) => {
+  const childrenEl = useRef(null);
 
-    this.handleKeyboardEvent = this.handleKeyboardEvent.bind(this);
-    this.registerExclusiveHandler = this.registerExclusiveHandler.bind(this);
-    this.deregisterExclusiveHandler = this.deregisterExclusiveHandler.bind(this);
-  }
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyboardEvent, false);
+    document.addEventListener('keyup', handleKeyboardEvent, false);
+    document.addEventListener('keypress', handleKeyboardEvent, false);
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardEvent, false);
+      document.removeEventListener('keyup', handleKeyboardEvent, false);
+      document.removeEventListener('keypress', handleKeyboardEvent, false);
+      // deregisterExclusiveHandler();
+    };
+  }, []);
 
-  componentWillMount() {
-    document.addEventListener('keydown', this.handleKeyboardEvent, false);
-    document.addEventListener('keyup', this.handleKeyboardEvent, false);
-    document.addEventListener('keypress', this.handleKeyboardEvent, false);
+  // useEffect(() => {
+  //   if (isExclusive && !isDisabled) {
+  //     registerExclusiveHandler();
+  //   } else {
+  //     deregisterExclusiveHandler();
+  //   }
+  // }, [isExclusive, isDisabled]);
 
-    const { isExclusive, isDisabled } = this.props;
-    if (isExclusive && !isDisabled) {
-      this.registerExclusiveHandler();
-    }
-  }
+  // function registerExclusiveHandler() {
+  //   deregisterExclusiveHandler();
+  //   exclusiveHandlers.unshift(this);
+  // }
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyboardEvent, false);
-    document.removeEventListener('keyup', this.handleKeyboardEvent, false);
-    document.removeEventListener('keypress', this.handleKeyboardEvent, false);
+  // function deregisterExclusiveHandler() {
+  //   if (exclusiveHandlers.includes(this)) {
+  //     exclusiveHandlers = exclusiveHandlers.filter(h => h !== this);
+  //   }
+  // }
 
-    this.deregisterExclusiveHandler();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { isExclusive, isDisabled } = nextProps;
-    const hasChanged = this.props.isExclusive !== isExclusive ||
-      this.props.isDisabled !== isDisabled;
-
-    if (hasChanged) {
-      if (isExclusive && !isDisabled) {
-        this.registerExclusiveHandler();
-      } else {
-        this.deregisterExclusiveHandler();
-      }
-    }
-  }
-
-  registerExclusiveHandler() {
-    this.deregisterExclusiveHandler();
-    exclusiveHandlers.unshift(this);
-  }
-
-  deregisterExclusiveHandler() {
-    if (exclusiveHandlers.includes(this)) {
-      exclusiveHandlers = exclusiveHandlers.filter(h => h !== this);
-    }
-  }
-
-  handleKeyboardEvent(event) {
-    const {
-      isDisabled, handleKeys, onKeyEvent, handleEventType, children, handleFocusableElements,
-    } = this.props;
-
+  function handleKeyboardEvent(event) {
     if (isDisabled) {
       return false;
     }
@@ -72,15 +58,15 @@ export default class KeyboardEventHandler extends React.Component {
       return false;
     }
 
-    const exclusiveHandlerInPlace = exclusiveHandlers.length > 0;
-    const isExcluded = exclusiveHandlerInPlace && exclusiveHandlers[0] !== this;
+    // const exclusiveHandlerInPlace = exclusiveHandlers.length > 0;
+    // const isExcluded = exclusiveHandlerInPlace && exclusiveHandlers[0] !== this;
 
-    if (isExcluded) {
-      return false;
-    }
+    // if (isExcluded) {
+    //   return false;
+    // }
 
     const isEligibleEvent = event.target === document.body || handleFocusableElements;
-    const isChildrenEvent = this.childrenContainer && this.childrenContainer.contains(event.target);
+    const isChildrenEvent = childrenEl && childrenEl.contains(event.target);
     const isValidSource = children ? isChildrenEvent : isEligibleEvent;
 
     if (!isValidSource) {
@@ -96,17 +82,15 @@ export default class KeyboardEventHandler extends React.Component {
 
     return false;
   }
-
-  render() {
-    const { children } = this.props;
-    const passProps = Object.assign({}, this.props)
-    for (const key of Object.keys(KeyboardEventHandler.propTypes)) {
-      delete passProps[key]
-    }
-    return children ? (<span ref={ e => {
-        this.childrenContainer = e;
-      }} {...passProps}>{children}</span>) : null;
-  }
+   
+  return (
+    <>
+      {children && (
+        <span ref={childrenEl} {...props}>{children}</span>
+      )}
+      {!children && null}
+    </>
+  );
 }
 
 KeyboardEventHandler.propTypes = {
@@ -121,7 +105,10 @@ KeyboardEventHandler.propTypes = {
 
 KeyboardEventHandler.defaultProps = {
   handleKeys: [],
-  handleFocusableElements: false,
   handleEventType: 'keydown',
+  handleFocusableElements: false,
   onKeyEvent: () => null,
+  isDisabled: false,
+  isExclusive: false,
+  children: null,
 };

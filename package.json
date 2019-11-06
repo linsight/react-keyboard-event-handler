@@ -61,7 +61,7 @@
     "yargs": "^11.1.0"
   },
   "peerDependencies": {
-    "react": "15.x || 16.x",
+    "react": "^16.8.0",
     "prop-types": "15.x || 16.x"
   }
 }
