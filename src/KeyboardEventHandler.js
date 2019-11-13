@@ -13,7 +13,7 @@ export default class KeyboardEventHandler extends React.Component {
     this.deregisterExclusiveHandler = this.deregisterExclusiveHandler.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     document.addEventListener('keydown', this.handleKeyboardEvent, false);
     document.addEventListener('keyup', this.handleKeyboardEvent, false);
     document.addEventListener('keypress', this.handleKeyboardEvent, false);
@@ -32,13 +32,13 @@ export default class KeyboardEventHandler extends React.Component {
     this.deregisterExclusiveHandler();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { isExclusive, isDisabled } = nextProps;
+  componentDidUpdate(prevProps) {
+    const { isExclusive, isDisabled } = prevProps;
     const hasChanged = this.props.isExclusive !== isExclusive ||
       this.props.isDisabled !== isDisabled;
 
     if (hasChanged) {
-      if (isExclusive && !isDisabled) {
+      if (this.props.isExclusive && !this.props.isDisabled) {
         this.registerExclusiveHandler();
       } else {
         this.deregisterExclusiveHandler();

@@ -74,9 +74,9 @@ For form control elements, React provides with `onKeyDown`, `onKeyPress` and `on
 | ----------------------- | -------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | handleKeys              | Array    | []           | An array of keys this handler should handle. <br/> There are also some handy alias for keys, see bellow for details. e.g. `['a', 'b', 'numeric']`                                                                                                                                                                                                                                                                                                                                                                                                      |
 | handleEventType         | String   | keydown      | Keyboard event type. <br />This can be 'keyup', 'keydown' or 'keypress'. <br /><sup>\*</sup>**Note**: 'keypress' event only support printable keys. i.e. no support for modifier keys or 'tab', 'enter' etc.                                                                                                                                                                                                                                                                                                                                           |
-| handleFocusableElements | Bool     | false        | By default, handler only handles key events sourced from `doucment.body`. When this props is set to `true`, it will also handle key events from all focusable elements. This props only apply when there's no children.                                                                                                                                                                                                                                                                                                                                |
+| handleFocusableElements | Bool     | false        | By default, handler only handles key events sourced from `doucment.body`. When this props is set to `true`, it will also handle key events from all focusable elements. This props only apply when there are no children.                                                                                                                                                                                                                                                                                                                                |
 | isDisabled              | Boolean  | false        | Enable/Disable handling keyboard events                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| isExclusive             | Boolean  | false        | When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, for suppressing any other handlers on a page when a modal opens with its own keyboard event handling.                                                                                                                                                                                                                                                                                |
+| isExclusive             | Boolean  | false        | When set to `true`, all other handler instances are suspended. <br />This is useful for temporary disabling all other keyboard event handlers. <br />For example, for suppressing any other handlers on a page when a modal opens with its keyboard event handling.                                                                                                                                                                                                                                                                                |
 | onKeyEvent              | function | `() => null` | <p>A callback function to call when the handler detects a matched key event.</p><p>The signature of the callback function is: <br />`function(key, event) { ... }`<p><dl><dh>`key`</dh><dd>The key name matches the current keyboard event.</dd><dh>`event`</dh><dd>The native [keyboard event](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent). e.g. you can use `event.keyCode` to get the numeric key code. This is useful for handling keys that are not supported (i.e. does not have a key name defined for the keys).</dd></dl> |
 | children                | Any      | null         | If `KeyboardEventHandler` wraps around any children elements, it will handle and ONLY handle key events sourced from its descendant elements, including any form controls, links or tab-enabled elements. `handleFocusableElements` has no effect when `children` exists.                                                                                                                                                                                                                                                                              |
 
@@ -84,9 +84,10 @@ For form control elements, React provides with `onKeyDown`, `onKeyPress` and `on
 
 The `handleKeys` prop accepts an array of key names. Key names and key alias free developers from dealing with numeric char codes and/or key codes and browser compatibility issues with `KeyboardEvent.code` and `KeyboardEvent.key`. (Ref: [JavaScript Madness: Keyboard Events](https://unixpapa.com/js/key.html))
 
-- Key names are in **LOWER CASE** for consistency. `handleKeys=['a']` will still handles key event for 'A' with caps lock on.
+
+- Key names are in **LOWER CASE** for consistency. `handleKeys=['a']` will still handle key event for 'A' with caps lock on.
 - To handle combined keys like `shift` and `a`, use key names in the format of `shift+a`;
-- You can also use key name alias like 'numbers' or 'alphanumeric'.
+- You can also use key name aliases like 'numbers' or 'alphanumeric'.
 
 ### Common keys
 
@@ -143,7 +144,7 @@ You can handle one or more common keys by using an array of their names.
 
 ### Modifier keys
 
-You can handle modifier key combined with a common keys by using key name in the format of `ctrl+a` or `ctrl+shift+a`. To use the `+` common key with modifier keys, use the alias key 'plus'. e.g. `ctrl+plus`.
+You can handle modifier keys combined with a common key by using key name in the format of `ctrl+a` or `ctrl+shift+a`. To use the `+` common key with modifier keys, use the alias key 'plus'. e.g. `ctrl+plus`.
 
 ```
 <KeyboardEventHandler
@@ -182,11 +183,11 @@ and put all handling logic for each key inside the handler callback function.
 | 'numeric'      | '0', '1', ....'9     | 10 number keys                                                                                                                                                                                                                                                            |
 | 'alphanumeric' | 'a'...'z', '0'...'9' | 36 alphanumeric keys                                                                                                                                                                                                                                                      |
 | 'function'     | 'f1'...'f19'         | 19 Fn keys                                                                                                                                                                                                                                                                |
-| 'all'          | n/a                  | Handle all keyboard events. If a key event does not match any common keys defined above, the `key` parameter to the callback function will have the value of 'other'. You can use the second parameter (the raw key event object) to implemnt you own key handling logic. |
+| 'all'          | n/a                  | All keyboard events. If a key event does not match any common keys defined above, the `key` parameter to the callback function will have the value of 'other'. You can use the second parameter (the raw key event object) to implement you own key handling logic. |
 
 **Note**:
 
-1. Alias keys are alias to a list of common keys. Expect the same behavior as if the respective array of common key names is in use.
+1. Alias keys are aliases to a list of common keys. Expect the same behavior as if the respective array of common key names is in use.
 1. When a keyboard event matches, the first (`key`) parameter to the callback function will be the matched lowercase common key name. e.g. `a` for alias `numeric`.
 1. Alias key names do not work with modifiers. e.g. `handleKeys=['ctrl+numeric'] // doesn't work`
 1. You can mix alias with common keys. e.g. `handleKeys=['numeric', 'a', 'enter', 'ctrl+b']`
@@ -202,7 +203,7 @@ Otherwise, the user will be navigating the product options in the modal and the 
 
 There could be other key handlers in your app, they all should be disabled to avoid unexpected results.
 
-The `isExclusive` prop can be really helpful in this situation. When a handler set to `isExclusive`, all other key handlers will be suspended.
+The `isExclusive` prop can be helpful in this situation. When a handler set to `isExclusive`, all other key handlers will be suspended.
 
 In the above example, the key handler in the modal could set to be `isExclusive`. When the modal opens, all other handlers will be temporarily suspended. When the modal is closed/unmounted, they will be working again.
 
@@ -213,7 +214,7 @@ Technically, exclusive handlers are put into a stack upon mounted or when change
 # About Higher Order Component
 
 I believe this is not a good use case of HoC.
-I found it hard to come up with a meaningful use case for passing an keyboard event object or the relevant key to a component.
+I found it hard to come up with a meaningful use case for passing a keyboard event object or the relevant key to a component.
 
 However, if you have a different view on this, please create an issue/request on GitHub.
 
@@ -225,7 +226,7 @@ Unfortunately, there's no good way for testing keyboard events with [Enzyme](htt
 
 Enzyme has two main limitations (ref: https://github.com/airbnb/enzyme/blob/master/docs/future.md):
 
-1. Event simulation is limited for Shallow rendering. But this component needs `componentWillMount` for registering keyboard events;
+1. Event simulation is limited for Shallow rendering. But this component needs `componentDidMount` for registering keyboard events;
 
 2. Event propagation is not supported. However, Key events on wrapped components are bubbled up and handled by at the document level by this component.
 
@@ -241,7 +242,7 @@ Therefore, when testing with Enzyme:
   import simulateEvent from 'simulate-event';
   ...
 
-  it('should be able to handle key events in case insensitive way ', () => {
+  it('should be able to handle key events in case-insensitive way ', () => {
     const handleKeyEvent = Sinon.spy();
     render(<KeyboardEventHandler handleKeys={['ctRl + A']} onKeyEvent={handleKeyEvent} />);
     simulateEvent.simulate(document.body, 'keydown', { keyCode: 65, ctrlKey: true });
