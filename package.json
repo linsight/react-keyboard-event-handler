@@ -1,6 +1,6 @@
 {
   "name": "react-keyboard-event-handler",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "A React component for handling keyboard events.",
   "main": "lib/react-keyboard-event-handler.js",
   "scripts": {
