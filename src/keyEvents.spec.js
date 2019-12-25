@@ -28,6 +28,8 @@ describe('keyEvents', () => {
       expect(matchKeyEvent({ which: 65 }, 'a')).to.be.true;
       expect(matchKeyEvent({ which: 65 }, 'A')).to.be.true;
       expect(matchKeyEvent({ which: 16 }, 'shift')).to.be.true;
+      expect(matchKeyEvent({ which: 222 }, 'quote')).to.be.true;
+      expect(matchKeyEvent({ which: 222 }, '\'')).to.be.true;
     });
 
     it('should match modified key event by name', () => {

@@ -133,12 +133,14 @@ You can handle one or more common keys by using an array of their names.
 | -/minus         | 189, 45, 173, 109                     |
 | .               | 190, 110                              |
 | /               | 191, 111                              |
-| `| 192          |
+| `               | 192                                   |
 | [               | 219                                   |
 | &#92;           | 220                                   |
 | ]               | 221                                   |
 | \*              | 106                                   |
 | +/plus          | 107                                   |
+| +/plus          | 107                                   |
+| '/quote         | 222                                   |
 
 **Note**: Native keyboard events with modifier key(s) will **NOT** match common keys in `handleKeys`. e.g. `handleKeys=['a']` will not handler events with combined keys 'Ctrl' and 'a'. To match native keyboard event with modifiers, read the next section.
 
