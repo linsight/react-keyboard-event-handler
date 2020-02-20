@@ -14,20 +14,24 @@ export default class KeyboardEventHandler extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyboardEvent, false);
-    document.addEventListener('keyup', this.handleKeyboardEvent, false);
-    document.addEventListener('keypress', this.handleKeyboardEvent, false);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('keydown', this.handleKeyboardEvent, false);
+      document.addEventListener('keyup', this.handleKeyboardEvent, false);
+      document.addEventListener('keypress', this.handleKeyboardEvent, false);
 
-    const { isExclusive, isDisabled } = this.props;
-    if (isExclusive && !isDisabled) {
-      this.registerExclusiveHandler();
+      const { isExclusive, isDisabled } = this.props;
+      if (isExclusive && !isDisabled) {
+        this.registerExclusiveHandler();
+      }
     }
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyboardEvent, false);
-    document.removeEventListener('keyup', this.handleKeyboardEvent, false);
-    document.removeEventListener('keypress', this.handleKeyboardEvent, false);
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('keydown', this.handleKeyboardEvent, false);
+      document.removeEventListener('keyup', this.handleKeyboardEvent, false);
+      document.removeEventListener('keypress', this.handleKeyboardEvent, false);
+    }
 
     this.deregisterExclusiveHandler();
   }
